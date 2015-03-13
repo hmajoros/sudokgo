@@ -1,0 +1,13 @@
+{
+  "name": "sudokGO",
+  "version": "0.0.1",
+  "description": "We can fill this in later!",
+  "dependencies": {
+    "express": "^4.12.2",
+    "socket.io": "^1.3.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hmajoros/sudokgo.git"
+  }
+}
