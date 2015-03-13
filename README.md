@@ -3,19 +3,13 @@ sudokGO
 
 ###Important files:
 
-####1. index.html
+__1. index.html__: contains the main view for the project. html / css
 
-- contains the main view for the project. html / css
+__2. server.js__: essentially the backend for the project
 
-####2. server.js
+__3. client.js__: client side actions. emits and recieves messages to the server.
 
-- essentially the backend for the project
-
-####3. client.js
-
-- client side actions. emits and recieves messages to the server.
-
-###How to send / recieve data
+#How to send / recieve data
 ####1. User sends data (client.js)
 ```js
     socket.emit('custom_message', data);
