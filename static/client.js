@@ -2,7 +2,16 @@
 var socket = io();
 
 $('form').submit(function() {
-    socket.emit('msg', $('#m').val());
-    $('#m').val('');
-    return false;
+    var username = $('#username').val();
+    socket.emit('join_room', username);
+    return false; // to prevent page reload
+});
+
+// socket.on('msg', function(msg) {
+//     $('#messages').append($('<li>').text(msg));
+// });
+
+socket.on('join_success', function(room) {
+    $('form').addClass('hide');
+    $('.share-link div').text(room);
 });
