@@ -1,0 +1,22 @@
+how to handle users
+===================
+
+click multiplayer ->
+enter name ->
+thrown into a lobby.
+
+from the lobby you can...
+- configure what game you're looking for
+- click on a player name to send game request
+- invite a friend (via url / link)
+
+
+how we are doing it now
+=======================
+clicks multiplayer button / invite friend to game ->
+one user joins ->
+enters name ->
+user1 put into the room ->
+when user2 clicks link, thrown into same room (via URL param?)
+game begin
+

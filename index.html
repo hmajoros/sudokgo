@@ -1,19 +1,51 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>Home | sudokGO</title>
+    <link href='http://fonts.googleapis.com/css?family=RobotoDraft:400,700' rel='stylesheet'>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="main.css">
   </head>
   <body>
     
+  <div class="container">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">sudokGO</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#">Single Player</a></li>
+            <li><a href="#">Battle Mode</a></li>
+            <li><a href="#">Leaderboard</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav> 
+  </div>
+    
     <div class="container">
-      <div class="row">
-        <div class="col-xs-12 col-md-6 col-md-offset-3 text-center">
-          <form action="">
-            <input type="text" id="username" placeholder="Enter username">
-            <button class="btn btn-danger">Create A Room</button>
-          </form>
+      <div class="jumbotron">
+        <div class="row">
+          <div class="col-xs-12 col-md-6 col-md-offset-3">
+            
+            <form id="username-form">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" placeholder="Enter username">
+              </div>
+
+              <button class="btn btn-danger">Create A Room</button>
+            </form>
+          </div>
         </div>
       </div>
       <div class="row share-link">
@@ -24,6 +56,7 @@
     <!-- javascript at end of body for better load times -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="jquery-1.11.2.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="client.js"></script>
 
   </body>
