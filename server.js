@@ -26,6 +26,7 @@ function Room(roomID, hostID) {
     this.hostID = hostID;
     this.settings = new Settings();
     this.full = false;
+    this.usersByID = [];
 }
 
 function Settings() {
@@ -33,6 +34,15 @@ function Settings() {
     this.showErrors = SHOW_ERRORS;
     this.allowErrors = ALLOW_ERRORS;
 }
+
+
+/*******************************************************
+ *
+ *                  begin everything
+ *
+ *******************************************************/
+
+startListen();
 
 app.use(express.static(path.join(__dirname, 'static')));
 
@@ -49,6 +59,7 @@ io.on('connection', function(socket) {
 
         users[user.userID] = user;
         rooms[roomID] = new Room(roomID, user.userID);
+        rooms[roomID].usersByID.push(user.userID);
         console.log('room: ' + roomID + ' created!');
         io.emit('room_created');
     });
@@ -65,10 +76,18 @@ io.on('connection', function(socket) {
             return;
         }
 
+        for (var userID in rooms[roomID].usersByID) {
+            if (username === users[userID]) {
+                console.log('username exists. try another');
+                io.emit('username_taken'); // if we care about this
+            }
+        }
+
         var user = new User(username, roomID, socket.id);
 
         users[user.userID] = user;
         rooms[roomID].full = true;
+        rooms[roomID].usersByID.push(user.userID);
         console.log('user joined room: ' + roomID);
     });
 
@@ -81,11 +100,25 @@ io.on('connection', function(socket) {
         console.log('a user left :(');
     });
 
+    socket.on('print_stats', function() {
+        console.log('==========================');
+        console.log('rooms ')
+        for (var r in rooms) {
+            room = rooms[r];
+            console.log('  room ' + room.roomID);
+            console.log('    host: ' + users[room.hostID].username + ' (id: ' +  room.hostID + ')');
+            console.log('    full: ' + room.full);
+            console.log('    users:');
+            for (var u in room.usersByID) {
+                user = users[room.usersByID[u]];
+                console.log('      user ' + user.username + ' (id: ' + user.userID + ')');
+            }
+            console.log('--------------------------');
+        }
+    });
+
 });
 
-http.listen(3000, function() {
-    console.log('listening on *:3000');
-});
 
 /*******************************************************
  *
@@ -93,14 +126,22 @@ http.listen(3000, function() {
  *
  *******************************************************/
 
+function startListen() {
+    var port = Number(process.env.PORT || 5000);
+    http.listen(port, function() {
+        console.log('listening on *:' + port);
+    });
+}
+
+
 // generates a "unique" userID. should never duplicate
 // found here: https://gist.github.com/gordonbrander/2230317
 function generateUserID() {
   return 'u_' + Math.random().toString(36).substr(2, 9);
-};
+}
 
 // roomID uses same generation algo as userID, but the
 // difference between the two is the prefix, 'u_' or 'r_'
 function generateRoomID() {
   return 'r_' + Math.random().toString(36).substr(2, 9);
-};
+}

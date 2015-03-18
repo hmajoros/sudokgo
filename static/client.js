@@ -15,6 +15,10 @@
         return false; // to prevent page reload
     });
 
+    $('#printstats').click(function() {
+        socket.emit('print_stats');
+    });
+
 
     
     // socket.on('msg', function(msg) {
