@@ -4,7 +4,8 @@
     var socket = io();
 
     $('#username-form').submit(function() {
-        var username = $('#username').val(),
+        var form = $('#username'),
+            username = form.val(),
             roomID = getParameterByName('id');
 
         if (!roomID) {
@@ -12,11 +13,33 @@
         } else {
             socket.emit('join_room', username, roomID);
         }
+
+        form.val('');
+        form.blur();
+
+        $('#row-msg').removeClass('hide');
+        $('#row-username').addClass('hide');
+
         return false; // to prevent page reload
+    });
+
+    $('#chat-form').submit(function() {
+        var form = $('#message'),
+            msg = form.val();
+
+        socket.emit('chat_message', msg);
+        form.val('');
+
+        $('#msg-cnt').append('<div class="col-xs-8 col-xs-offset-4 alert alert-info">' + msg + '</div>');
+        return false;
     });
 
     $('#printstats').click(function() {
         socket.emit('print_stats');
+    });
+
+    socket.on('emit_message', function(msg, username) {
+        $('#msg-cnt').append('<div class="col-xs-8 alert alert-success">' + msg + '</div><div class="clearfix"></div>');
     });
 
 

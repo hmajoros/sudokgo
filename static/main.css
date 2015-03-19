@@ -5,3 +5,8 @@ body {
 * {
     font-family: RobotoDraft;
 }
+
+#msg-cnt {
+    height: 400px;
+    overflow: scroll;
+}

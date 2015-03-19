@@ -60,8 +60,14 @@ io.on('connection', function(socket) {
         users[user.userID] = user;
         rooms[roomID] = new Room(roomID, user.userID);
         rooms[roomID].usersByID.push(user.userID);
+
+        // initialize socket values
+        socket.join(roomID);
+        socket.room = roomID;
+        socket.username = username;
+
+        io.emit('room_created', user.roomID);
         console.log('room: ' + roomID + ' created!');
-        io.emit('room_created');
     });
     socket.on('join_room', function(username, roomID) {
         if (!rooms[roomID]) {
@@ -88,12 +94,21 @@ io.on('connection', function(socket) {
         users[user.userID] = user;
         rooms[roomID].full = true;
         rooms[roomID].usersByID.push(user.userID);
+
+        // initialize socket values
+        socket.join(roomID);
+        socket.room = roomID;
+        socket.username = username;
+
+        io.emit('joined_room', user.roomID);
         console.log('user joined room: ' + roomID);
     });
 
-    socket.on('msg', function(msg) {
-        console.log('message: ' + msg);
-        io.emit('msg', msg);
+    socket.on('chat_message', function(msg) {
+        console.log('message: "' + msg + '" from user: ' + socket.username);
+        // io.in(socket.room).broadcast.emit('emit_message', msg, socket.username);
+        socket.broadcast.to(socket.room).emit('emit_message', msg, socket.username);
+        // io.emit('msg', msg);
     });
 
     socket.on('disconnect', function() {

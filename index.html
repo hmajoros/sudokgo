@@ -34,23 +34,40 @@
     
     <div class="container">
       <div class="jumbotron">
-        <div class="row">
+        <div class="row" id="row-username">
           <div class="col-xs-12 col-md-6 col-md-offset-3">
             
             <form id="username-form">
               <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Enter username">
+                <input type="text" class="form-control" id="username" placeholder="Enter username" autocomplete="off">
               </div>
 
               <button class="btn btn-danger">Create A Room</button>
             </form>
           </div>
         </div>
+
+        <div class="row hide" id="row-msg">
+          <div class="col-xs-12 col-md-6 col-md-offset-3">
+
+            <div id="msg-cnt"></div> <!-- messages added automatically -->
+
+            <form id="chat-form" class="form-inline">
+              <div class="input-group">
+                <input type="text" class="form-control" id="message" placeholder="send message" autocomplete="off">
+                <span class="input-group-btn">
+                  <button class="btn btn-success">Send</button>
+                </span>
+              </div>
+            </form>
+
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="col-xs-12 col-md-6 col-md-offset-3 text-center">
-          <button class="btn btn-primary" id="printstats">Click to Print</button>
+          <button class="btn btn-primary" id="printstats">Click to Print (to console or server logs)</button>
         </div> 
       </div>
     </div>
