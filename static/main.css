@@ -10,3 +10,13 @@ body {
     height: 400px;
     overflow: scroll;
 }
+
+.chat-other {
+    float: left;
+    max-width: 67%;
+}
+
+.chat-you {
+    float: right;
+    max-width: 67%;
+}

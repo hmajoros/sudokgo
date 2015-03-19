@@ -66,19 +66,19 @@ io.on('connection', function(socket) {
         socket.room = roomID;
         socket.username = username;
 
-        io.emit('room_created', user.roomID);
+        socket.emit('room_created', user.roomID);
         console.log('room: ' + roomID + ' created!');
     });
     socket.on('join_room', function(username, roomID) {
         if (!rooms[roomID]) {
             console.log('room does not exist');
-            io.emit('incorrect_room');
+            socket.emit('incorrect_room');
             return
         }
 
         if (rooms[roomID].full) {
             console.log('room is full');
-            io.emit('full_room');
+            socket.emit('full_room');
             return;
         }
 

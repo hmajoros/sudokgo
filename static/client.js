@@ -25,12 +25,16 @@
 
     $('#chat-form').submit(function() {
         var form = $('#message'),
-            msg = form.val();
+            msg = form.val(),
+            cnt = $('#msg-cnt'),
+            scrollPos;
 
         socket.emit('chat_message', msg);
         form.val('');
 
-        $('#msg-cnt').append('<div class="col-xs-8 col-xs-offset-4 alert alert-info">' + msg + '</div>');
+        cnt.append('<div class="alert alert-info chat-you">' + msg + '</div><div class="clearfix"></div>');
+        scrollPos = cnt[0].scrollHeight - cnt.height();
+        cnt.animate({ scrollTop: scrollPos }, 100);
         return false;
     });
 
@@ -39,7 +43,12 @@
     });
 
     socket.on('emit_message', function(msg, username) {
-        $('#msg-cnt').append('<div class="col-xs-8 alert alert-success">' + msg + '</div><div class="clearfix"></div>');
+        var cnt = $('#msg-cnt'),
+            scrollPos;
+        
+        cnt.append('<div class="alert alert-success chat-other">' + msg + '</div><div class="clearfix"></div>');
+        scrollPos = cnt[0].scrollHeight - cnt.height();
+        cnt.animate({ scrollTop: scrollPos }, 100);
     });
 
 
