@@ -1,5 +1,11 @@
 sudokGO
 =======
+###How to run:
+1. ```node server.js```
+2. go to ```localhost:5000```
+3. to have another user join, navigate to ```localhost:5000/?id=r_xxxxxxxxx```
+    - check logs to find the right room id
+
 
 ###Important files:
 
