@@ -57,8 +57,9 @@
     //     $('#messages').append($('<li>').text(msg));
     // });
 
-    socket.on('join_success', function(room) {
-        $('form').addClass('hide');
+    socket.on('room_created', function(room) {
+        //$('form').addClass('hide');
+        $('#msg-cnt').append('<div class="alert alert-danger">Now joined room ' + room + '. Invite your friends by sending them this link: ' + document.URL + '?id=' + room + '</div>');
         $('.share-link div').text(room);
     });
 
@@ -69,6 +70,7 @@
     *
     *****************************************************/
  
+    // gets the roomID from the url parameter
     function getParameterByName(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),

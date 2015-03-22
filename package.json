@@ -4,7 +4,8 @@
   "description": "We can fill this in later!",
   "dependencies": {
     "express": "^4.12.2",
-    "socket.io": "^1.3.5"
+    "socket.io": "^1.3.5",
+    "swig": "^1.4.2"
   },
   "repository": {
     "type": "git",

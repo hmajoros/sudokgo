@@ -3,6 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
+var swig = require('swig');
 
 // define default settings
 var BOARD_DIFFICULTY = 'EASY',
@@ -35,7 +36,6 @@ function Settings() {
     this.allowErrors = ALLOW_ERRORS;
 }
 
-
 /*******************************************************
  *
  *                  begin everything
@@ -45,9 +45,12 @@ function Settings() {
 startListen();
 
 app.use(express.static(path.join(__dirname, 'static')));
+app.engine('html', swig.renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/index.html');
+    res.render('index', { title: 'Home' });
 });
 
 io.on('connection', function(socket) {
@@ -85,7 +88,7 @@ io.on('connection', function(socket) {
         for (var userID in rooms[roomID].usersByID) {
             if (username === users[userID]) {
                 console.log('username exists. try another');
-                io.emit('username_taken'); // if we care about this
+                socket.emit('username_taken'); // if we care about this
             }
         }
 
@@ -100,18 +103,17 @@ io.on('connection', function(socket) {
         socket.room = roomID;
         socket.username = username;
 
-        io.emit('joined_room', user.roomID);
+        socket.emit('joined_room', user.roomID);
         console.log('user joined room: ' + roomID);
     });
 
     socket.on('chat_message', function(msg) {
         console.log('message: "' + msg + '" from user: ' + socket.username);
-        // io.in(socket.room).broadcast.emit('emit_message', msg, socket.username);
         socket.broadcast.to(socket.room).emit('emit_message', msg, socket.username);
-        // io.emit('msg', msg);
     });
 
     socket.on('disconnect', function() {
+        socket.leave()
         console.log('a user left :(');
     });
 
@@ -147,7 +149,6 @@ function startListen() {
         console.log('listening on *:' + port);
     });
 }
-
 
 // generates a "unique" userID. should never duplicate
 // found here: https://gist.github.com/gordonbrander/2230317
