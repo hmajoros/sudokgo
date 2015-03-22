@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+    <title>SudokUber</title>
+    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+</head>
+<body onload = "createSudoku()">
+    <div id="wrapper">
+    <!-- start wrapper-->
+        <header>
+            <h1>SudokUber</h1>
+        </header>
+        <section class="content">
+            <div id = "sudokuBoard">
+                <section>
+                    <table id = "sudokuTable">
+                    </table>
+                </section>
+            </div>
+        </section>
+        <aside class="sidebar">
+            <div id = "timer">00:00</div>
+            <button onclick="fillBoard(); startClock();">New Game</button></br>
+            <button id = "done" type = "submit" onclick = "checkBoard()">Done!</button></br>
+        </aside>
+    <!-- end wrapper -->
+    </div>
+    <footer>Built by: Team GO</footer>
+    <script type="text/javascript" src="../static/board.js"></script>
+</body>
+</html>
