@@ -6,8 +6,9 @@
 {% endblock %}
 
 {% block content %}
-<body onload = "createSudoku()"><!--error check with layout.html-->
-        <div class = "row">
+<body onload = "createSudoku(); createNumPad();"><!--potential error w/ layout.html-->
+    <div class="container-fluid">
+        <div class = "row-fluid">
             <div class="col-md-8" id = "sudokuBoard">
                 <div class="col-md-2"></div>
                 <div class = "col-md-4">
@@ -18,17 +19,29 @@
             </div>
             <div class="col-md-4">
                 <div class = "row">
-                    <div class = "col-md-4" id = "timer">00:00</div>
-                    <button id = "pause_play_btn" type="button" class="btn btn-warning" disabled = "disabled" aria-label="Pause" onclick="toggleClock()">
-                      <span id = "pause_play" class="col-md-1 glyphicon glyphicon-pause" aria-hidden="true"></span>
-                    </button>
+                    <h3>
+                        <span class="label label-success" id = "timer">00:00</span>
+                        <a href="#" id = "pause_play_btn" class="label label-success" aria-label="Pause" onclick="toggleClock()">
+                          <span id = "pause_play" class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                        </a>
+                    </h3>  
+                    
                 </div>
-                <button id = "new" class="btn btn-danger" onclick="fillBoard(); startClock();">New Game</button></br>
-                <button class="btn btn-primary" id = "done" type = "submit" onclick = "checkBoard()">Done!</button>
-                <h2>Rules</h2>
-                <p>The Classic Sudoku is a number placing puzzle based on a 9x9 grid with several given numbers. The object is to place the numbers 1 to 9 in the empty squares so that each row, each column and each 3x3 box contains the same number only once.</p>
-                <p>Rules from <a href="http://www.conceptispuzzles.com/?uri=puzzle/sudoku/rules" target="_blank"> Conceptis Puzzles</a></p>
+                <div class = "row">
+                    <button id = "new" class="btn btn-danger" onclick="fillBoard(); startClock();">New Game</button>
+                </div>
+                <div class = "row">
+                    <button class="btn btn-primary" id = "done" type = "submit" onclick = "">Quit Game</button>
+                </div>
+                <div class = "row">
+                    <button class="btn btn-primary" id = "done" type = "submit" onclick = "solveBoard()">(debugger solve)</button>
+                </div>
+                <!--NUM PAD-->
+                <div class = "row">
+                    <table id = "numPad">
+                    </table>
+                </div>
             </div>
         </div>
-    <!-- end wrapper -->
+    </div>
 {% endblock %}
