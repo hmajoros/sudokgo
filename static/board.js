@@ -110,17 +110,16 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
                 var row=document.createElement('tr');
                 for(var j = 0; j < 9; ++j){
                     var td=document.createElement('td');
-                    var numb = document.createElement("input");
-                    numb.readOnly = true;
-                    numb.className += "cell";
+                    td.innerHTML = "";
+                    td.className += "cell";
                     td.style.border = "thin solid black";
                     var block;
 
                     if (i === 2 || i === 5) {
-                        td.style.borderBottom = "thick solid";
+                        td.style.borderBottom = "thick solid black";
                     }
-                    if (j === 2 || j === 5) {
-                        td.style.borderRight = "thick solid";
+                    if (j === 2 || j === 5) { 
+                        td.style.borderRight = "thick solid black";
                     }
 
                     if (i < 3 && j < 3) {
@@ -148,8 +147,7 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
                         //numb.className += "green_cell";
                     }
                     numbID = [i, j, block];
-                    numb.id += numbID.join('');
-                    td.appendChild(numb);
+                    td.id += numbID.join('');
                     row.appendChild(td)
                 }
                 boardbdy.appendChild(row);
@@ -170,8 +168,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
             //create base sudoku board
             for (var i = 0; i < 9; i++) {
                 for (var j = 0; j < 9; j++) {
-                    board[i * 9 + j].value = (i * 3 + Math.floor(i/3) + j) % 9 + 1;
-                    board[i * 9 + j].readOnly = true;
+                    board[i * 9 + j].innerHTML = (i * 3 + Math.floor(i/3) + j) % 9 + 1;
                     board[i * 9 + j].style.color = "black";
                 }
             }
@@ -182,9 +179,9 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                     var swap = col + (Math.floor(Math.random() * 3) * 3);// + 0, +3, +6
                 }while(swap === 0)
                 for (var j = 0; j < 9; ++j) {
-                    var tmp = board[col + (j*9)].value;
-                    board[col + (j*9)].value = board[swap + (j*9)].value;
-                    board[swap + (j*9)].value = tmp;
+                    var tmp = board[col + (j*9)].innerHTML;
+                    board[col + (j*9)].innerHTML = board[swap + (j*9)].innerHTML;
+                    board[swap + (j*9)].innerHTML = tmp;
                 }
             }
             //switch cols within section blocks (Ex. all columns in the first three 
@@ -196,9 +193,9 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                     var swap2 = Math.floor(Math.random() * 3) + block*3;
                 }while(swap1 === swap2)
                 for (var j = 0; j < 9; ++j) {
-                    var tmp = board[swap1 + (j*9)].value;
-                    board[swap1 + (j*9)].value = board[swap2 + (j*9)].value;
-                    board[swap2 + (j*9)].value = tmp;
+                    var tmp = board[swap1 + (j*9)].innerHTML;
+                    board[swap1 + (j*9)].innerHTML = board[swap2 + (j*9)].innerHTML;
+                    board[swap2 + (j*9)].innerHTML = tmp;
                 }
             }
             //switch rows within section blocks (Ex. all rows in the first three rows will be swapped)
@@ -209,9 +206,9 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                     var swap2 = Math.floor(Math.random() * 3) * 9 + block * 27;
                 }while(swap1 === swap2)
                 for (var j = 0; j < 9; ++j) {
-                    var tmp = board[swap1 + j].value;
-                    board[swap1 + j].value = board[swap2 + j].value;
-                    board[swap2 + j].value = tmp;
+                    var tmp = board[swap1 + j].innerHTML;
+                    board[swap1 + j].innerHTML = board[swap2 + j].innerHTML;
+                    board[swap2 + j].innerHTML = tmp;
                 }
             }
             //switch numbers (Ex. all 9s will be swapped with all 7s on the board)
@@ -221,13 +218,13 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                     var numb2 = Math.ceil(Math.random() * 9);
                 }while(numb1 === numb2)
                 for (var j = 0; j < board.length; ++j) {
-                    if (board[j].value === numb1) board[j].value = numb2;
-                    else if (board[j].value === numb2) board[j].value = numb1;
+                    if (board[j].innerHTML === numb1) board[j].innerHTML = numb2;
+                    else if (board[j].innerHTML === numb2) board[j].innerHTML = numb1;
                 }
             }
             for (var i = 0; i < board.length; ++i)
             {
-                solved_board[i] = board[i].value;
+                solved_board[i] = board[i].innerHTML;
             }
 
             hideCells();
@@ -237,8 +234,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
             //create base sudoku board
             var board = document.getElementsByClassName("cell");
             for (var i = 0; i < solved_board.length; i++) {
-                board[i].value = solved_board[i];
-                board[i].readOnly = true;
+                board[i].innerHTML = solved_board[i];
                 board[i].style.color = "black";
             }
             board_size = 81;
@@ -259,11 +255,10 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                     var row = Math.floor(cell/3);
                     var col = cell - row*3;
                     cell = row*9 + block_row*27 + col + block_col*3;
-                    board[cell].readOnly = false;
                     board[cell].style.color = "blue";
                     board[cell].onclick = function(event) { handleClick(this); };
                     board[cell].onblur = function(event) { handleBlur(this); };
-                    board[cell].value = "";
+                    board[cell].innerHTML = "";
                     --board_size;
                 }
             }
@@ -291,9 +286,36 @@ Returns the scrambled array. */
         var current_cell;//current selected cell
         var enter_num = true;//bool of whether number(init) or mark
 
+        $(document).keypress(function(e) {
+            if (current_cell != undefined)
+            {
+                var key = e.keyCode || e.charCode;
+                if( key == 8 || key == 46 ) {
+                    new_val = "";
+                    console.log("delete");
+                }
+                else new_val = String.fromCharCode(e.keyCode);
+                current_cell.innerHTML = new_val;
+                console.log("old " + old_val + "new" + new_val);
+                if (new_val != old_val) //did the user change the value
+                {
+                    removeCorrectedConflicts();
+                    if (checkValid(current_cell) && (current_cell.style.color === "red"))//if the user fixes a cell
+                    {
+                        document.getElementById(numb.id).style.color = "blue";
+                    }
+                }
+                if (new_val == "" && current_cell.style.color == "blue") --board_size;
+            }
+            
+        });
         function handleClick(numb) {
             current_cell = document.getElementById(numb.id);
-            old_val = document.getElementById(numb.id).value;
+            current_cell.onKeyPress =  function(event) { handleClick(this, event); }; 
+
+            old_val = document.getElementById(numb.id).innerHTML;
+            console.log("clicked");
+            //current_cell.style.backgroundColor = "#CCFFCC";
             if (enter_num) //submit regular number input
             {
 
@@ -305,7 +327,10 @@ Returns the scrambled array. */
 
         }
         function handleBlur(numb) {
-            new_val = document.getElementById(numb.id).value;
+            console.log("blurred");
+            new_val = document.getElementById(numb.id).innerHTML;
+            var blurred = document.getElementById(numb.id);
+            blurred.style.backgroundColor = "white";
             console.log("old " + old_val + "new" + new_val);
             if (new_val != old_val) //did the user change the value
             {
@@ -358,10 +383,10 @@ matches other cells in the same block, column, or section. Returns bool: true if
         //checks if cell is valid and turns it red if it is invalid
         function checkValid(numb) {
             var valid = true;        
-            if(numb.value != "") {
-                if (numb.value % 1 != 0 || numb.value > 9 || numb.value < 1) {
+            if(numb.innerHTML != "") {
+                if (numb.innerHTML % 1 != 0 || numb.innerHTML > 9 || numb.innerHTML < 1) {
                     document.getElementById(numb.id).style.color = "red";
-                    alert("Invalid Entry: Please enter a number between 1 - 9. You entered " + numb.value);
+                    alert("Invalid Entry: Please enter a number between 1 - 9. You entered " + numb.innerHTML);
                     return false;
                 }
             }
@@ -400,7 +425,7 @@ matches other cells in the same block, column, or section. Returns bool: true if
                 var block = boardId[2];
                 if (row === check[0] && col === check[1]) continue;
                 if (row === check[0] || col === check[1] || block === check[2]) {
-                    if (numb.value === board[i].value && numb.value != "") {
+                    if (numb.innerHTML === board[i].innerHTML && numb.innerHTML != "") {
                         conflict = true;
                         //will add to conflict list unless reviewing conflict list
                         if (!board_check) conflict_list[conflict_list.length] = i;
@@ -421,7 +446,7 @@ matches other cells in the same block, column, or section. Returns bool: true if
                     var comp = document.getElementById(board[j].id);
                     if (!checkConflict(comp, true)) {
                         conflict_list.splice(i,1);
-                        if (comp.readOnly === true) comp.style.color = "black";
+                        if (comp.style.color === "#990000") comp.style.color = "black";
                         else comp.style.color = "blue";
                     }
                     else console.log("still conflict");
