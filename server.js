@@ -28,6 +28,7 @@ function Room(roomID, hostID) {
     this.settings = new Settings();
     this.full = false;
     this.usersByID = [];
+    // this.board // the solved board for the current game
 }
 
 function Settings() {
@@ -62,7 +63,10 @@ var single_player = single_player_tpl(
 
 startListen();
 
+// include all files stored in the static folder
 app.use(express.static(path.join(__dirname, 'static')));
+
+// initialize swig stuff
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
