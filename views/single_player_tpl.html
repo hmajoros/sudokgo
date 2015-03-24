@@ -30,14 +30,21 @@
                 <div class = "row">
                     <button id = "new" class="btn btn-danger" onclick="fillBoard(); startClock();">New Game</button>
                 </div>
-                <div class = "row">
+                <!--Quit not yet implemented-->
+                <div class = "row margin-top-05">
                     <button class="btn btn-primary" id = "done" type = "submit" onclick = "">Quit Game</button>
                 </div>
-                <div class = "row">
+                <div class = "row margin-top-05">
                     <button class="btn btn-primary" id = "done" type = "submit" onclick = "solveBoard()">(debugger solve)</button>
                 </div>
+                <div class = "row margin-top-10">
+                    <input id = "note-entry" type="checkbox" name="toggle-note" data-on-color = "info" data-off-color = "primary" data-on-text = "Numbers" data-off-text = "Marks" checked>
+                </div>
+                <div class = "row margin-top-10">
+                    <input id = "toggle-hidden" type="hidden" checked>
+                </div>
                 <!--NUM PAD-->
-                <div class = "row">
+                <div class = "row margin-top-05">
                     <table id = "numPad">
                     </table>
                 </div>

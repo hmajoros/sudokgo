@@ -69,7 +69,6 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
 
 //END TIMER SECTION
 //BEGIN CREATE NUMPAD//
-        var current_cell;//current selected cell
         function createNumPad() {
             var num_pad=document.getElementById('numPad');
             var num_pad_bdy=document.createElement('tbody');
@@ -80,7 +79,8 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
                     var td=document.createElement('td');
                     var number = document.createElement("button");
                     number.type = "button";
-                    number.className += "btn btn-primary";
+                    if (count % 2 === 0) number.className += "btn btn-primary";
+                    else number.className += "btn btn-info";
                     number.innerHTML = count;
                     number.value = count;
                     number.onclick = function(event) { handleNumPad(this); };
@@ -93,11 +93,7 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
             }
             num_pad.appendChild(num_pad_bdy);
         };
-        function handleNumPad(number) {
-            var selected = document.getElementById(current_cell.id);
-            selected.value = number.value;
-            handleBlur(selected);
-        };
+
 //END CREATE NUMPAD//
 /*createSudoku() creates a base board framework and is executed on page load*/
 //BEGIN CREATE BOARD
@@ -265,7 +261,6 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                     cell = row*9 + block_row*27 + col + block_col*3;
                     board[cell].readOnly = false;
                     board[cell].style.color = "blue";
-                    //board[cell].addEventListener("click", handleNumPad());
                     board[cell].onclick = function(event) { handleClick(this); };
                     board[cell].onblur = function(event) { handleBlur(this); };
                     board[cell].value = "";
@@ -290,14 +285,24 @@ Returns the scrambled array. */
             return fishYatesArray;
         }
 //END CREATE SUDOKU SECTION
-//BEGIN VALIDATION SECTION
-/*checkValid(numb) is called everytime a user clicks off of a filled cell entry. Checks to see if entry
-matches other cells in the same block, column, or section. Returns bool: true if valid, false if not*/
+//HANDLE ENTRY TYPES
         var old_val;//val of currently selected
         var new_val;//val of what the user changes the current value to
+        var current_cell;//current selected cell
+        var enter_num = true;//bool of whether number(init) or mark
+
         function handleClick(numb) {
             current_cell = document.getElementById(numb.id);
             old_val = document.getElementById(numb.id).value;
+            if (enter_num) //submit regular number input
+            {
+
+            }
+            else //add mark
+            {
+                //oldObject.parentNode.replaceChild(newObject,oldObject);
+            }
+
         }
         function handleBlur(numb) {
             new_val = document.getElementById(numb.id).value;
@@ -310,8 +315,46 @@ matches other cells in the same block, column, or section. Returns bool: true if
                     document.getElementById(numb.id).style.color = "blue";
                 }
             }
-            //need to handle if a user deletes a previously valid number (they know it's wrong before AI)  
+            if (new_val == "" && current_cell.style.color == "blue") --board_size;
         }
+        function handleNumPad(number) {
+            if (current_cell === undefined) return;
+            var selected = document.getElementById(current_cell.id);
+            old_val = selected.value;
+            if (old_val === number.value) selected.value = "";
+            else selected.value = number.value;
+            handleBlur(selected);
+        };
+    //BEGIN HANDLE NOTE vs ENTRY//
+        $("#note-entry").bootstrapSwitch();
+
+        $("#note-entry").on('switchChange.bootstrapSwitch', function(event, state) {
+            enter_num = state;// state: number(true) | mark(false)
+        });
+
+        function createMarkInput() {
+            var mark_table=document.createElement('table');
+            var tbdy=document.createElement('tbody');
+            for(var i = 0; i < 3; ++i){
+                var row=document.createElement('tr');
+                var count = 0;
+                for(var j = 0; j < 3; ++j){
+                    var td=document.createElement('td');
+                    td.innerHTML = count;
+                    td.style.visibility = "hidden";
+                    row.appendChild(td)
+                }
+                tbdy.appendChild(row);
+            }
+            mark_table.appendChild(tbdy);
+            return mark_table;
+        }
+
+    //END HANDLE NOTE vs ENTRY//
+//END ENTRY HANDLE
+//BEGIN VALIDATION SECTION
+/*checkValid(numb) is called everytime a user clicks off of a filled cell entry. Checks to see if entry
+matches other cells in the same block, column, or section. Returns bool: true if valid, false if not*/
         //checks if cell is valid and turns it red if it is invalid
         function checkValid(numb) {
             var valid = true;        
