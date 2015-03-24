@@ -36,6 +36,24 @@ function Settings() {
     this.allowErrors = ALLOW_ERRORS;
 }
 
+//define templates
+var layout_tpl = swig.compileFile('views/layout.html');
+var header_tpl = swig.compileFile('views/header_tpl.html');
+var single_player_tpl = swig.compileFile('views/single_player_tpl.html');
+
+var header_content = header_tpl(
+{
+    //single_player = single_player_tpl
+});
+var layout = layout_tpl(
+{
+    header: header_content
+});
+/*
+var single_player = single_player_tpl(
+{
+});*/
+
 /*******************************************************
  *
  *                  begin everything
@@ -49,8 +67,17 @@ app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 
+/*app.get('/', function(req, res) {
+    res.render('index', { 
+        title: 'Home',
+        header: header_content 
+    });
+});*/
 app.get('/', function(req, res) {
-    res.render('index', { title: 'Home' });
+    res.render('single_player_tpl', { 
+        title: 'Home',
+        header: header_content 
+    });
 });
 
 io.on('connection', function(socket) {

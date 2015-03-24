@@ -5,9 +5,11 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
 //START TIMER SECTION
         var clicked = false;
         var sec,min;
-        function startClock() {
+        
+        function startClock() {  
             sec = 0;
-            min = 0;
+            min = 0;         
+            document.getElementById("pause_play_btn").disabled = false;
             if (clicked === false) {
                 clock = setInterval("stopWatch()", 1000);
                 clicked = true;
@@ -22,9 +24,15 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
             else sec++;
             document.getElementById("timer").innerHTML = convertToTime(min) + ":" + convertToTime(sec);
         }
+
         function convertToTime(time){
             if (time > 9) return time;
             else return "0"+time;
+        }
+
+        function restartClock() {
+            clock = setInterval("stopWatch()", 1000);
+            clicked = true;
         }
 
         function stopClock() {
@@ -32,6 +40,31 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
             document.getElementById("timer").innerHTML= convertToTime(min) + ":" + convertToTime(sec);
             clicked = false;
         }
+        function toggleClock() {
+            var pause_play=document.getElementById('pause_play');
+
+            if (clicked === true) //clock is running->pause
+            {
+                stopClock();
+                pause_play.className = "col-md-1 glyphicon glyphicon-play";
+            }
+            else
+            {
+                restartClock();
+                pause_play.className = "col-md-1 glyphicon glyphicon-pause";
+            }
+        }
+
+        $("#pause_play_btn").click(function(){
+            $("#sudokuTable").toggle();
+        });
+
+        $("#new").click(function(){
+            $("#sudokuTable").show();
+        });
+
+                      
+
 //END TIMER SECTION
 /*createSudoku() creates a base board framework and is executed on page load*/
 //BEGIN CREATE BOARD
@@ -39,6 +72,9 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
             var body=document.getElementsByTagName('body')[0];
             var board=document.getElementById('sudokuTable');
             var boardbdy=document.createElement('tbody');
+
+            board.style.border = "thick solid black";
+
             for(var i = 0; i < 9; ++i){
                 var row=document.createElement('tr');
                 for(var j = 0; j < 9; ++j){
@@ -46,30 +82,39 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
                     var numb = document.createElement("input");
                     numb.readOnly = true;
                     numb.className += "cell";
+                    td.style.border = "thin solid black";
                     var block;
+
+                    if (i === 2 || i === 5) {
+                        td.style.borderBottom = "thick solid";
+                    }
+                    if (j === 2 || j === 5) {
+                        td.style.borderRight = "thick solid";
+                    }
+
                     if (i < 3 && j < 3) {
                         block = 'a';
-                        numb.className += " grey_block";
+                        //numb.className += "green_cell";
                     }
                     else if (i < 3 && j < 6) block = 'b';
                     else if (i < 3 && j > 5) {
                         block = 'c';
-                        numb.className += " grey_block";
+                        //numb.className += "green_cell";
                     }
                     else if (i < 6 && j < 3) block = 'd';
                     else if (i < 6 && j < 6) {
                         block = 'e';
-                        numb.className += " grey_block";
+                        //numb.className += "green_cell";
                     }
                     else if (i < 6 && j > 5) block = 'f';
                     else if (i > 5 && j < 3) {
                         block = 'g';
-                        numb.className += " grey_block";
+                        //numb.className += "green_cell";
                     }
                     else if (i > 5 && j < 6) block = 'h';
                     else {
                         block = 'i';
-                        numb.className += " grey_block";
+                        //numb.className += "green_cell";
                     }
                     numbID = [i, j, block];
                     numb.id += numbID.join('');
@@ -79,7 +124,6 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
                 boardbdy.appendChild(row);
             }
             board.appendChild(boardbdy);
-            body.appendChild(board);
         };
 /*fillBoard() fills the board with a complete base sudoku board, it then scrambles the rows/cols/and numbers. 
 It is executed on "New Game" press, and calls hideCells(). The algorithm is based on the sudoku generator by 

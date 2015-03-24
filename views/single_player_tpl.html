@@ -1,30 +1,34 @@
-<!DOCTYPE html>
-<head>
-    <title>SudokUber</title>
-    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
-</head>
-<body onload = "createSudoku()">
-    <div id="wrapper">
-    <!-- start wrapper-->
-        <header>
-            <h1>SudokUber</h1>
-        </header>
-        <section class="content">
-            <div id = "sudokuBoard">
-                <section>
+{% extends 'layout.html' %}
+
+{% block head %}
+    {% parent %}
+    <link rel="stylesheet" href="single_player.css">
+{% endblock %}
+
+{% block content %}
+<body onload = "createSudoku()"><!--error check with layout.html-->
+        <div class = "row">
+            <div class="col-md-8" id = "sudokuBoard">
+                <div class="col-md-2"></div>
+                <div class = "col-md-4">
                     <table id = "sudokuTable">
                     </table>
-                </section>
+                </div>
+                <div class="col-md-2"></div>
             </div>
-        </section>
-        <aside class="sidebar">
-            <div id = "timer">00:00</div>
-            <button onclick="fillBoard(); startClock();">New Game</button></br>
-            <button id = "done" type = "submit" onclick = "checkBoard()">Done!</button></br>
-        </aside>
+            <div class="col-md-4">
+                <div class = "row">
+                    <div class = "col-md-4" id = "timer">00:00</div>
+                    <button id = "pause_play_btn" type="button" class="btn btn-warning" disabled = "disabled" aria-label="Pause" onclick="toggleClock()">
+                      <span id = "pause_play" class="col-md-1 glyphicon glyphicon-pause" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <button id = "new" class="btn btn-danger" onclick="fillBoard(); startClock();">New Game</button></br>
+                <button class="btn btn-primary" id = "done" type = "submit" onclick = "checkBoard()">Done!</button>
+                <h2>Rules</h2>
+                <p>The Classic Sudoku is a number placing puzzle based on a 9x9 grid with several given numbers. The object is to place the numbers 1 to 9 in the empty squares so that each row, each column and each 3x3 box contains the same number only once.</p>
+                <p>Rules from <a href="http://www.conceptispuzzles.com/?uri=puzzle/sudoku/rules" target="_blank"> Conceptis Puzzles</a></p>
+            </div>
+        </div>
     <!-- end wrapper -->
-    </div>
-    <footer>Built by: Team GO</footer>
-    <script type="text/javascript" src="../static/board.js"></script>
-</body>
-</html>
+{% endblock %}
