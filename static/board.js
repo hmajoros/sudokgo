@@ -287,26 +287,27 @@ Returns the scrambled array. */
         var enter_num = true;//bool of whether number(init) or mark
 
         $(document).keypress(function(e) {
-            if (current_cell != undefined)
-            {
-                var key = e.keyCode || e.charCode;
-                if( key == 8 || key == 46 ) {
-                    new_val = "";
-                    console.log("delete");
-                }
-                else new_val = String.fromCharCode(e.keyCode);
-                current_cell.innerHTML = new_val;
-                console.log("old " + old_val + "new" + new_val);
-                if (new_val != old_val) //did the user change the value
-                {
-                    removeCorrectedConflicts();
-                    if (checkValid(current_cell) && (current_cell.style.color === "red"))//if the user fixes a cell
-                    {
-                        document.getElementById(numb.id).style.color = "blue";
-                    }
-                }
-                if (new_val == "" && current_cell.style.color == "blue") --board_size;
-            }
+            console.log(e.which);
+            // if (current_cell != undefined)
+            // {
+            //     var key = e.keyCode || e.charCode;
+            //     if( key == 8 || key == 46 ) {
+            //         new_val = "";
+            //         console.log("delete");
+            //     }
+            //     else new_val = String.fromCharCode(e.keyCode);
+            //     current_cell.innerHTML = new_val;
+            //     console.log("old " + old_val + "new" + new_val);
+            //     if (new_val != old_val) //did the user change the value
+            //     {
+            //         removeCorrectedConflicts();
+            //         if (checkValid(current_cell) && (current_cell.style.color === "red"))//if the user fixes a cell
+            //         {
+            //             document.getElementById(numb.id).style.color = "blue";
+            //         }
+            //     }
+            //     if (new_val == "" && current_cell.style.color == "blue") --board_size;
+            // }
             
         });
         function handleClick(numb) {
