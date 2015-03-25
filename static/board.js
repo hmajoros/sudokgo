@@ -98,8 +98,10 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
 /*createSudoku() creates a base board framework and is executed on page load*/
 //BEGIN CREATE BOARD
         var solved_board = [];
+        var marked_board = [];
         var conflict_list = []; //list of currently conflicting/red board indexes
         var board_size = 81;
+
         function createSudoku() {
             var board=document.getElementById('sudokuTable');
             var boardbdy=document.createElement('tbody');
@@ -109,6 +111,8 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
             for(var i = 0; i < 9; ++i){
                 var row=document.createElement('tr');
                 for(var j = 0; j < 9; ++j){
+                    marked_board[marked_board.length] = [];
+                    //marked_board[marked_board.length] = createMarkInput();
                     var td=document.createElement('td');
                     td.innerHTML = "";
                     td.className += "cell";
@@ -170,6 +174,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                 for (var j = 0; j < 9; j++) {
                     board[i * 9 + j].innerHTML = (i * 3 + Math.floor(i/3) + j) % 9 + 1;
                     board[i * 9 + j].style.color = "black";
+                    board[i * 9 + j].style.backgroundColor = "#EBEBEB";
                 }
             }
             //switch corresponding cols (Ex. the 2nd and 5th column)
@@ -239,7 +244,6 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
             }
             board_size = 81;
             checkBoard();
-
          };
 /*hideCells() naiivly hides 4 squares/block. This will create an easy sudoku puzzle that will normally be unique.*/
         function hideCells() {
@@ -255,7 +259,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                     var row = Math.floor(cell/3);
                     var col = cell - row*3;
                     cell = row*9 + block_row*27 + col + block_col*3;
-                    board[cell].style.color = "blue";
+                    board[cell].style.backgroundColor = "white";
                     board[cell].onclick = function(event) { handleClick(this); };
                     board[cell].onblur = function(event) { handleBlur(this); };
                     board[cell].innerHTML = "";
@@ -284,99 +288,113 @@ Returns the scrambled array. */
         var old_val;//val of currently selected
         var new_val;//val of what the user changes the current value to
         var current_cell;//current selected cell
+        var index;//index of current cell in board;
         var enter_num = true;//bool of whether number(init) or mark
 
-        $(document).keypress(function(e) {
-            console.log(e.which);
-            // if (current_cell != undefined)
-            // {
-            //     var key = e.keyCode || e.charCode;
-            //     if( key == 8 || key == 46 ) {
-            //         new_val = "";
-            //         console.log("delete");
-            //     }
-            //     else new_val = String.fromCharCode(e.keyCode);
-            //     current_cell.innerHTML = new_val;
-            //     console.log("old " + old_val + "new" + new_val);
-            //     if (new_val != old_val) //did the user change the value
-            //     {
-            //         removeCorrectedConflicts();
-            //         if (checkValid(current_cell) && (current_cell.style.color === "red"))//if the user fixes a cell
-            //         {
-            //             document.getElementById(numb.id).style.color = "blue";
-            //         }
-            //     }
-            //     if (new_val == "" && current_cell.style.color == "blue") --board_size;
-            // }
-            
+        var rx = /INPUT|SELECT|TEXTAREA/i;
+
+        $(document).bind("keydown", function(e){
+            var key;
+            if( e.which == 8 ){ // 8 == backspace
+                if(!rx.test(e.target.tagName) || e.target.disabled || e.target.readOnly ){
+                    e.preventDefault();
+                }
+                key = "";
+                console.log("delete");  
+            }
+            else key = String.fromCharCode(e.keyCode);
+            handleKey(key);
         });
-        function handleClick(numb) {
-            current_cell = document.getElementById(numb.id);
-            current_cell.onKeyPress =  function(event) { handleClick(this, event); }; 
 
-            old_val = document.getElementById(numb.id).innerHTML;
-            console.log("clicked");
-            //current_cell.style.backgroundColor = "#CCFFCC";
-            if (enter_num) //submit regular number input
-            {
-
-            }
-            else //add mark
-            {
-                //oldObject.parentNode.replaceChild(newObject,oldObject);
-            }
-
-        }
-        function handleBlur(numb) {
-            console.log("blurred");
-            new_val = document.getElementById(numb.id).innerHTML;
-            var blurred = document.getElementById(numb.id);
-            blurred.style.backgroundColor = "white";
-            console.log("old " + old_val + "new" + new_val);
-            if (new_val != old_val) //did the user change the value
-            {
-                removeCorrectedConflicts();
-                if (checkValid(numb) && (numb.style.color === "red"))//if the user fixes a cell
-                {
-                    document.getElementById(numb.id).style.color = "blue";
+        function handleKey(key) {
+            if(key != "") {
+                if (key % 1 != 0 || key > 9 || key < 1) {
+                    return;
                 }
             }
-            if (new_val == "" && current_cell.style.color == "blue") --board_size;
-        }
+            if (current_cell != undefined) {
+                new_val = key;
+                while (current_cell.hasChildNodes()) {
+                    console.log(current_cell.firstChild);   
+                    current_cell.removeChild(current_cell.firstChild);
+                }
+                if (enter_num)//enter number
+                {
+                    current_cell.innerHTML = new_val;
+                    console.log("old " + old_val + "new" + new_val);
+                    if (new_val != old_val) //did the user change the value
+                    {
+                        removeCorrectedConflicts();
+                        if (checkValid(current_cell))//if the user fixes a cell
+                        {
+                            if (current_cell.style.color === "red") current_cell.style.color = "black";
+                            else if (new_val == "") --board_size;
+                        }
+                    }
+                }
+                else if (new_val != "")//enter mark
+                {       
+                    var val_idx = marked_board[index].indexOf(new_val);
+                    if (val_idx === -1) marked_board[index].push(new_val);
+                    else marked_board[index].splice(val_idx,1);
+
+                    var td_table=document.createElement('table');
+                    var td_bdy=document.createElement('tbody');
+
+                    for(var i = 0; i < 3; ++i)
+                    {
+                        var row=document.createElement('tr');
+                        for(var j = 0; j < 3; ++j){
+                            var td=document.createElement('td');
+                            if ((i*3+j) < marked_board[index].length)
+                            {
+                                td.innerHTML = marked_board[index][i*3+j];
+                                td.style.fontSize = "xx-small";
+                                td.style.color = "black";
+                            }
+                            else 
+                            {td.innerHTML = "";}
+                            row.appendChild(td);
+                        }
+                        td_bdy.appendChild(row);
+                    }
+                    td_table.appendChild(td_bdy);
+
+                    current_cell.appendChild(td_table);
+                    removeCorrectedConflicts();
+                }
+            }
+
+        };
+
+        function handleClick(numb) {
+            if (current_cell != undefined) current_cell.style.backgroundColor = "white";
+            findIndex(numb.id);
+            
+            current_cell = document.getElementById(numb.id);
+            old_val = document.getElementById(numb.id).innerHTML;
+            current_cell.style.backgroundColor = "#CFF6FF";
+        };
+
         function handleNumPad(number) {
             if (current_cell === undefined) return;
             var selected = document.getElementById(current_cell.id);
             old_val = selected.value;
             if (old_val === number.value) selected.value = "";
             else selected.value = number.value;
-            handleBlur(selected);
+            handleKey(selected.value);
         };
-    //BEGIN HANDLE NOTE vs ENTRY//
+
+        function findIndex(id) {
+            var split_id = id.split("");
+            index = parseInt(split_id[0]) * 9 + parseInt(split_id[1]);
+        };
+
         $("#note-entry").bootstrapSwitch();
 
         $("#note-entry").on('switchChange.bootstrapSwitch', function(event, state) {
             enter_num = state;// state: number(true) | mark(false)
         });
-
-        function createMarkInput() {
-            var mark_table=document.createElement('table');
-            var tbdy=document.createElement('tbody');
-            for(var i = 0; i < 3; ++i){
-                var row=document.createElement('tr');
-                var count = 0;
-                for(var j = 0; j < 3; ++j){
-                    var td=document.createElement('td');
-                    td.innerHTML = count;
-                    td.style.visibility = "hidden";
-                    row.appendChild(td)
-                }
-                tbdy.appendChild(row);
-            }
-            mark_table.appendChild(tbdy);
-            return mark_table;
-        }
-
-    //END HANDLE NOTE vs ENTRY//
 //END ENTRY HANDLE
 //BEGIN VALIDATION SECTION
 /*checkValid(numb) is called everytime a user clicks off of a filled cell entry. Checks to see if entry
@@ -384,14 +402,6 @@ matches other cells in the same block, column, or section. Returns bool: true if
         //checks if cell is valid and turns it red if it is invalid
         function checkValid(numb) {
             var valid = true;        
-            if(numb.innerHTML != "") {
-                if (numb.innerHTML % 1 != 0 || numb.innerHTML > 9 || numb.innerHTML < 1) {
-                    document.getElementById(numb.id).style.color = "red";
-                    alert("Invalid Entry: Please enter a number between 1 - 9. You entered " + numb.innerHTML);
-                    return false;
-                }
-            }
-            else return true; //a blank space is valid
             var board = document.getElementsByClassName("cell");           
             if (checkConflict(numb, false)) {
                 valid = false;
@@ -430,7 +440,6 @@ matches other cells in the same block, column, or section. Returns bool: true if
                         conflict = true;
                         //will add to conflict list unless reviewing conflict list
                         if (!board_check) conflict_list[conflict_list.length] = i;
-
                     }
                 }
             }
@@ -447,8 +456,7 @@ matches other cells in the same block, column, or section. Returns bool: true if
                     var comp = document.getElementById(board[j].id);
                     if (!checkConflict(comp, true)) {
                         conflict_list.splice(i,1);
-                        if (comp.style.color === "#990000") comp.style.color = "black";
-                        else comp.style.color = "blue";
+                        comp.style.color = "black";
                     }
                     else console.log("still conflict");
                 }
