@@ -91,6 +91,7 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
                 }
                 num_pad_bdy.appendChild(row);
             }
+
             num_pad.appendChild(num_pad_bdy);
         };
 
@@ -161,11 +162,13 @@ and the board is valid. Based on code at http://jsfiddle.net/AbrGL/8/*/
 /*fillBoard() fills the board with a complete base sudoku board, it then scrambles the rows/cols/and numbers. 
 It is executed on "New Game" press, and calls hideCells(). The algorithm is based on the sudoku generator by 
 David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/     
-*/
+*/  
+        solved_board = [];
+        conflict_list = [];
+        board_size = 81;
+
         function fillBoard() {
-            solved_board = [];
-            conflict_list = [];
-            board_size = 81;
+            
 
             var board = document.getElementsByClassName("cell");
             var randomNine = fishYatesShuffle(9);
@@ -245,6 +248,13 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
             board_size = 81;
             checkBoard();
          };
+         function clearBoard() {
+            var board = document.getElementsByClassName("cell");
+            for (var i = 0; i < board.length; i++) {
+                board[i].innerHTML = "";
+            }
+            board_size = 0;
+        };
 /*hideCells() naiivly hides 4 squares/block. This will create an easy sudoku puzzle that will normally be unique.*/
         function hideCells() {
             var board = document.getElementsByClassName("cell");
@@ -296,9 +306,7 @@ Returns the scrambled array. */
         $(document).bind("keydown", function(e){
             var key;
             if( e.which == 8 ){ // 8 == backspace
-                if(!rx.test(e.target.tagName) || e.target.disabled || e.target.readOnly ){
-                    e.preventDefault();
-                }
+                e.preventDefault();
                 key = "";
                 console.log("delete");  
             }
@@ -315,13 +323,11 @@ Returns the scrambled array. */
             if (current_cell != undefined) {
                 new_val = key;
                 while (current_cell.hasChildNodes()) {
-                    console.log(current_cell.firstChild);   
                     current_cell.removeChild(current_cell.firstChild);
                 }
                 if (enter_num)//enter number
                 {
                     current_cell.innerHTML = new_val;
-                    console.log("old " + old_val + "new" + new_val);
                     if (new_val != old_val) //did the user change the value
                     {
                         removeCorrectedConflicts();
@@ -332,40 +338,52 @@ Returns the scrambled array. */
                         }
                     }
                 }
-                else if (new_val != "")//enter mark
+                else//enter mark
                 {       
-                    var val_idx = marked_board[index].indexOf(new_val);
-                    if (val_idx === -1) marked_board[index].push(new_val);
-                    else marked_board[index].splice(val_idx,1);
-
-                    var td_table=document.createElement('table');
-                    var td_bdy=document.createElement('tbody');
-
-                    for(var i = 0; i < 3; ++i)
+                    if (new_val == "") 
                     {
-                        var row=document.createElement('tr');
-                        for(var j = 0; j < 3; ++j){
-                            var td=document.createElement('td');
-                            if ((i*3+j) < marked_board[index].length)
-                            {
-                                td.innerHTML = marked_board[index][i*3+j];
-                                td.style.fontSize = "xx-small";
-                                td.style.color = "black";
-                            }
-                            else 
-                            {td.innerHTML = "";}
-                            row.appendChild(td);
-                        }
-                        td_bdy.appendChild(row);
+                        if (marked_board[index].length > 0) marked_board[index].pop();
                     }
-                    td_table.appendChild(td_bdy);
+                    else
+                    {
+                        var val_idx = marked_board[index].indexOf(new_val);
+                        if (val_idx === -1) marked_board[index].push(new_val);
+                        else marked_board[index].splice(val_idx,1);
+                    }
 
-                    current_cell.appendChild(td_table);
+                    createMarkTable();
                     removeCorrectedConflicts();
                 }
             }
-
         };
+
+        function createMarkTable() {
+            var td_table=document.createElement('table');
+            var td_bdy=document.createElement('tbody');
+
+            for(var i = 0; i < 3; ++i)
+            {
+                var row=document.createElement('tr');
+                for(var j = 0; j < 3; ++j){
+                    var td=document.createElement('td');
+                    if ((i*3+j) < marked_board[index].length)
+                    {
+                        td.innerHTML = marked_board[index][i*3+j];
+                        td.style.fontSize = "x-small";
+                        td.style.color = "black";
+                    }
+                    else 
+                    {td.innerHTML = "";}
+                    row.appendChild(td);
+                }
+                td_bdy.appendChild(row);
+            }
+            td_table.appendChild(td_bdy);
+            td_table.style.display = "inline-block";
+
+            current_cell.appendChild(td_table);
+        };
+
 
         function handleClick(numb) {
             if (current_cell != undefined) current_cell.style.backgroundColor = "white";
@@ -374,6 +392,8 @@ Returns the scrambled array. */
             current_cell = document.getElementById(numb.id);
             old_val = document.getElementById(numb.id).innerHTML;
             current_cell.style.backgroundColor = "#CFF6FF";
+            removeCorrectedConflicts();
+
         };
 
         function handleNumPad(number) {
@@ -462,6 +482,8 @@ matches other cells in the same block, column, or section. Returns bool: true if
                 }
             }
         };
+//END VALIDATION SECTION
+//BEGIN/END FUNTIONALITY BEGIN
 //checkBoard() checks the entire board to see if valid and stops the timer if it the valid
         function checkBoard() {
             if (board_size >= 81) {
@@ -469,6 +491,7 @@ matches other cells in the same block, column, or section. Returns bool: true if
                alert("CONGRATS! " + "You finished in: " + convertToTime(min) + ":" + convertToTime(sec));
                stopClock(); 
             } 
-        }
-//END VALIDATION SECTION
+        };
+
+//BEGIN/END FUNTIONALITY END
 

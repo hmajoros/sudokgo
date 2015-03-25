@@ -28,24 +28,47 @@
                 <div class = "row">
                     <button id = "new" class="btn btn-danger" onclick="fillBoard(); startClock();">New Game</button>
                 </div>
-                <!--Quit not yet implemented-->
                 <div class = "row margin-top-05">
-                    <button class="btn btn-primary" id = "done" type = "submit" onclick = "">Quit Game</button>
+                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#quitModal" onclick="stopClock();">
+                      Quit Game
+                    </button>
                 </div>
                 <div class = "row margin-top-05">
-                    <button class="btn btn-primary" id = "done" type = "submit" onclick = "solveBoard()">(debugger solve)</button>
+                    <button class="btn btn-primary" type = "submit" onclick = "solveBoard()">(debugger solve)</button>
                 </div>
                 <div class = "row margin-top-10">
                     <input id = "note-entry" type="checkbox" name="toggle-note" data-on-color = "info" data-off-color = "primary" data-on-text = "Numbers" data-off-text = "Marks" checked>
-                </div>
-                <div class = "row margin-top-10">
-                    <input id = "toggle-hidden" type="hidden" checked>
                 </div>
                 <!--NUM PAD-->
                 <div class = "row margin-top-05">
                     <table id = "numPad">
                     </table>
                 </div>
+                <div class = "row margin-top-05">
+                    <button class="btn btn-primary" value = "" type = "submit" onclick = "handleKey(this.value);">Clear Cell</button>
+                </div>
+
+                
+
+                <!--Quit Modal -->
+                <div class="modal fade" id="quitModal" tabindex="-1" role="dialog" aria-labelledby="quitLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="quitLabel">Quit Game?</h4>
+                      </div>
+                      <div class="modal-body">
+                        Are you sure you would like to quit?
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="restartClock();">No</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="clearBoard();">Yes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
             </div>
         </div>
     </div>
