@@ -77,6 +77,11 @@
                 edit_cell.innerHTML = new_val;
                 if (new_val != old_val) //did the user change the value
                 {
+                    var undoInfo = [3];
+                    undoInfo[0] = edit_cell;
+                    undoInfo[1] = old_val;
+                    undoInfo[2] = new_val;
+                    undoStack.push(undoInfo);
                     removeCorrectedConflicts();
                     if (checkValid(edit_cell))//if the user fixes a cell
                     {
@@ -152,3 +157,45 @@
         enter_num = state;// state: number(true) | mark(false)
     });
 //END ENTRY HANDLE
+
+//BEGIN UNDOREDO SECTION
+    function undo() {
+        //TODO: disable when undoStack's length is 0
+        if(undoStack.length > 0)
+        {
+            var info = undoStack.pop();
+            if(info[1] == undefined)
+                info[0].innerHTML = null;
+            else
+                info[0].innerHTML = info[1];
+            redoStack.push(info);
+            removeCorrectedConflicts();
+            if (checkValid(info[0]))//if the user fixes a cell
+            {
+                if (info[0].style.color === "red") info[0].style.color = "black";
+                else if (info[1] == "") --board_size;
+            }
+        }
+        
+    }
+    function redo() {
+        //TODO: disable when redoStack's length is 0
+        if(redoStack.length > 0)
+        {
+            var info = redoStack.pop();
+            if(info[1] == undefined)
+                info[0].innerHTML = null;
+            else
+                info[0].innerHTML = info[2];
+            undoStack.push(info);
+            removeCorrectedConflicts();
+            if (checkValid(info[0]))//if the user fixes a cell
+            {
+                if (info[0].style.color === "red") info[0].style.color = "black";
+                else if (info[2] == "") --board_size;
+            }
+        }
+            
+    }
+
+
