@@ -61,7 +61,7 @@
 //checks for valid 1-9 entry and either add num/mark depending on user setting
 //then validates cell
     function handleKey(key) {
-        if(key != "") {
+        if (key != "") {
             if (key % 1 != 0 || key > 9 || key < 1) {
                 return;
             }
