@@ -67,8 +67,15 @@
             }
         }
         if (edit_cell != undefined) {
+
             new_val = key;
-            if (new_val === "" && edit_cell.style.color === "black") --board_size;
+            old_val = edit_cell.innerHTML;
+            
+            if (new_val === "" & old_val != "" && edit_cell.style.color === "black") --board_size;
+            
+            //For undo/redo marks
+            var old_val_undo = edit_cell.innerHTML;
+
             while (edit_cell.hasChildNodes()) {
                 edit_cell.removeChild(edit_cell.firstChild);
             }
@@ -77,20 +84,20 @@
                 edit_cell.innerHTML = new_val;
                 if (new_val != old_val) //did the user change the value
                 {
-                    var undoInfo = [3];
-                    undoInfo[0] = edit_cell;
-                    undoInfo[1] = old_val;
-                    undoInfo[2] = new_val;
-                    undoStack.push(undoInfo);
                     removeCorrectedConflicts();
                     if (checkValid(edit_cell))//if the user fixes a cell
                     {
                         if (edit_cell.style.color === "red") edit_cell.style.color = "black";
                     }
+                    var undoInfo = [3];
+                    undoInfo[0] = edit_cell;
+                    undoInfo[1] = old_val_undo;
+                    undoInfo[2] = new_val;
+                    undoStack.push(undoInfo);
                 }
             }
             else //enter mark
-            {       
+            {                      
                 if (new_val === "" && marked_board[index].length > 0) marked_board[index].pop();
                 else
                 {
@@ -98,9 +105,15 @@
                     if (val_idx === -1) marked_board[index].push(new_val);
                     else marked_board[index].splice(val_idx,1);
                 }
-
                 createMarkTable();
                 removeCorrectedConflicts();
+
+                //For undo
+                var undoInfo = [3];
+                undoInfo[0] = edit_cell;
+                undoInfo[1] = old_val_undo;
+                undoInfo[2] = edit_cell.innerHTML;
+                undoStack.push(undoInfo);
             }
         }
         console.log(board_size);
@@ -164,17 +177,8 @@
         if(undoStack.length > 0)
         {
             var info = undoStack.pop();
-            if(info[1] == undefined)
-                info[0].innerHTML = null;
-            else
-                info[0].innerHTML = info[1];
+            changeCell(info[0],info[1], info[2]);
             redoStack.push(info);
-            removeCorrectedConflicts();
-            if (checkValid(info[0]))//if the user fixes a cell
-            {
-                if (info[0].style.color === "red") info[0].style.color = "black";
-                else if (info[1] == "") --board_size;
-            }
         }
         
     }
@@ -183,19 +187,30 @@
         if(redoStack.length > 0)
         {
             var info = redoStack.pop();
-            if(info[1] == undefined)
-                info[0].innerHTML = null;
-            else
-                info[0].innerHTML = info[2];
+            changeCell(info[0], info[2], info[1]);
             undoStack.push(info);
-            removeCorrectedConflicts();
-            if (checkValid(info[0]))//if the user fixes a cell
+        }            
+    }
+    function changeCell(cell, new_value, old_value)
+    {
+        var oldColor = cell.style.color;
+        if(new_value == undefined)
+                cell.innerHTML = null;
+        else
+            cell.innerHTML = new_value;
+        removeCorrectedConflicts();
+        if (checkValid(cell))//if the user fixes a cell
+        {
+            if (cell.style.color === "red") cell.style.color = "black";
+        }
+        else if (new_value === "" && old_value != "" && cell.style.color === "black") 
+        {
+            if(!(new_value == "" && oldColor == "red"))
             {
-                if (info[0].style.color === "red") info[0].style.color = "black";
-                else if (info[2] == "") --board_size;
+                --board_size;
             }
         }
-            
+        console.log(board_size);
     }
 
 
