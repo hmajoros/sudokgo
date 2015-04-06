@@ -7,6 +7,8 @@
         var marked_board = [];
         var conflict_list = [];//list of currently conflicting/red board indexes
         var board_size = 81;
+        var undoStack = [];
+        var redoStack = [];
 
         function createSudoku() {
             var board=document.getElementById('sudokuTable');

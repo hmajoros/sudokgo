@@ -61,14 +61,21 @@
 //checks for valid 1-9 entry and either add num/mark depending on user setting
 //then validates cell
     function handleKey(key) {
-        if(key != "") {
+        if (key != "") {
             if (key % 1 != 0 || key > 9 || key < 1) {
                 return;
             }
         }
         if (edit_cell != undefined) {
+
             new_val = key;
-            if (new_val === "" && edit_cell.style.color === "black") --board_size;
+            old_val = edit_cell.innerHTML;
+            
+            if (new_val === "" & old_val != "" && edit_cell.style.color === "black") --board_size;
+            
+            //For undo/redo marks
+            var old_val_undo = edit_cell.innerHTML;
+
             while (edit_cell.hasChildNodes()) {
                 edit_cell.removeChild(edit_cell.firstChild);
             }
@@ -82,10 +89,15 @@
                     {
                         if (edit_cell.style.color === "red") edit_cell.style.color = "black";
                     }
+                    var undoInfo = [3];
+                    undoInfo[0] = edit_cell;
+                    undoInfo[1] = old_val_undo;
+                    undoInfo[2] = new_val;
+                    undoStack.push(undoInfo);
                 }
             }
             else //enter mark
-            {       
+            {                      
                 if (new_val === "" && marked_board[index].length > 0) marked_board[index].pop();
                 else
                 {
@@ -93,9 +105,15 @@
                     if (val_idx === -1) marked_board[index].push(new_val);
                     else marked_board[index].splice(val_idx,1);
                 }
-
                 createMarkTable();
                 removeCorrectedConflicts();
+
+                //For undo
+                var undoInfo = [3];
+                undoInfo[0] = edit_cell;
+                undoInfo[1] = old_val_undo;
+                undoInfo[2] = edit_cell.innerHTML;
+                undoStack.push(undoInfo);
             }
         }
         console.log(board_size);
@@ -152,3 +170,47 @@
         enter_num = state;// state: number(true) | mark(false)
     });
 //END ENTRY HANDLE
+
+//BEGIN UNDOREDO SECTION
+    function undo() {
+        //TODO: disable when undoStack's length is 0
+        if(undoStack.length > 0)
+        {
+            var info = undoStack.pop();
+            changeCell(info[0],info[1], info[2]);
+            redoStack.push(info);
+        }
+        
+    }
+    function redo() {
+        //TODO: disable when redoStack's length is 0
+        if(redoStack.length > 0)
+        {
+            var info = redoStack.pop();
+            changeCell(info[0], info[2], info[1]);
+            undoStack.push(info);
+        }            
+    }
+    function changeCell(cell, new_value, old_value)
+    {
+        var oldColor = cell.style.color;
+        if(new_value == undefined)
+                cell.innerHTML = null;
+        else
+            cell.innerHTML = new_value;
+        removeCorrectedConflicts();
+        if (checkValid(cell))//if the user fixes a cell
+        {
+            if (cell.style.color === "red") cell.style.color = "black";
+        }
+        else if (new_value === "" && old_value != "" && cell.style.color === "black") 
+        {
+            if(!(new_value == "" && oldColor == "red"))
+            {
+                --board_size;
+            }
+        }
+        console.log(board_size);
+    }
+
+

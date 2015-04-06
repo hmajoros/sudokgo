@@ -84,6 +84,13 @@ app.get('/', function(req, res) {
     });
 });
 
+app.get('/multiplayer', function(req, res) {
+    res.render('multi_player_tpl', {
+        title: 'Multiplayer',
+        header: header_content
+    });
+});
+
 io.on('connection', function(socket) {
     console.log('a user connected');
 
