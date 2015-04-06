@@ -33,27 +33,22 @@
 
                     if (i < 3 && j < 3) {
                         block = 'a';
-                        //numb.className += "green_cell";
                     }
                     else if (i < 3 && j < 6) block = 'b';
                     else if (i < 3 && j > 5) {
                         block = 'c';
-                        //numb.className += "green_cell";
                     }
                     else if (i < 6 && j < 3) block = 'd';
                     else if (i < 6 && j < 6) {
                         block = 'e';
-                        //numb.className += "green_cell";
                     }
                     else if (i < 6 && j > 5) block = 'f';
                     else if (i > 5 && j < 3) {
                         block = 'g';
-                        //numb.className += "green_cell";
                     }
                     else if (i > 5 && j < 6) block = 'h';
                     else {
                         block = 'i';
-                        //numb.className += "green_cell";
                     }
                     numbID = [i, j, block];
                     td.id += numbID.join('');
