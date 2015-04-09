@@ -15,9 +15,8 @@ var rooms = {},
     users = {};
 
 // define object constructors
-function User(username, roomID, socketID) {
+function User(roomID, socketID) {
     this.userID = generateUserID();
-    this.username = username;
     this.roomID = roomID;
     this.socketID = socketID;
 }
@@ -94,9 +93,9 @@ app.get('/multiplayer', function(req, res) {
 io.on('connection', function(socket) {
     console.log('a user connected');
 
-    socket.on('create_room', function(username) {
+    socket.on('create_room', function() {
         var roomID = generateRoomID(),
-            user = new User(username, roomID, socket.id);
+            user = new User(roomID, socket.id);
 
         users[user.userID] = user;
         rooms[roomID] = new Room(roomID, user.userID);
@@ -105,12 +104,12 @@ io.on('connection', function(socket) {
         // initialize socket values
         socket.join(roomID);
         socket.room = roomID;
-        socket.username = username;
 
         socket.emit('room_created', user.roomID);
         console.log('room: ' + roomID + ' created!');
     });
-    socket.on('join_room', function(username, roomID) {
+    socket.on('join_room', function(roomID) {
+        console.log("joining room");
         if (!rooms[roomID]) {
             console.log('room does not exist');
             socket.emit('incorrect_room');
@@ -123,14 +122,14 @@ io.on('connection', function(socket) {
             return;
         }
 
-        for (var userID in rooms[roomID].usersByID) {
-            if (username === users[userID]) {
-                console.log('username exists. try another');
-                socket.emit('username_taken'); // if we care about this
-            }
-        }
+        // for (var userID in rooms[roomID].usersByID) {
+        //     if (username === users[userID]) {
+        //         console.log('username exists. try another');
+        //         socket.emit('username_taken'); // if we care about this
+        //     }
+        // }
 
-        var user = new User(username, roomID, socket.id);
+        var user = new User(roomID, socket.id);
 
         users[user.userID] = user;
         rooms[roomID].full = true;
@@ -139,19 +138,18 @@ io.on('connection', function(socket) {
         // initialize socket values
         socket.join(roomID);
         socket.room = roomID;
-        socket.username = username;
 
         socket.emit('joined_room', user.roomID);
         console.log('user joined room: ' + roomID);
     });
 
-    socket.on('chat_message', function(msg) {
-        console.log('message: "' + msg + '" from user: ' + socket.username);
-        socket.broadcast.to(socket.room).emit('emit_message', msg, socket.username);
-    });
+    // socket.on('chat_message', function(msg) {
+    //     console.log('message: "' + msg + '" from user: ' + socket.username);
+    //     socket.broadcast.to(socket.room).emit('emit_message', msg, socket.username);
+    // });
 
     socket.on('disconnect', function() {
-        socket.leave()
+        socket.leave();
         console.log('a user left :(');
     });
 
@@ -161,12 +159,12 @@ io.on('connection', function(socket) {
         for (var r in rooms) {
             room = rooms[r];
             console.log('  room ' + room.roomID);
-            console.log('    host: ' + users[room.hostID].username + ' (id: ' +  room.hostID + ')');
+            console.log('    host: ' +  room.hostID);
             console.log('    full: ' + room.full);
             console.log('    users:');
             for (var u in room.usersByID) {
                 user = users[room.usersByID[u]];
-                console.log('      user ' + user.username + ' (id: ' + user.userID + ')');
+                console.log('      user ' + user.userID);
             }
             console.log('--------------------------');
         }

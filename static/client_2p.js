@@ -3,15 +3,27 @@
     // initialize main global for sockets
     var socket = io();
 
+    $(document).ready(function() {
+
+        checkURL();
+
+        createSudoku();
+    });
+
+
     $('#username-form').submit(function() {
         var form = $('#username'),
             username = form.val(),
             roomID = getParameterByName('id');
 
+        if (roomID) {
+            socket.emit('join_room', roomID);
+        }
+
         if (!roomID) {
-            socket.emit('create_room', username);
+            socket.emit('create_room');
         } else {
-            socket.emit('join_room', username, roomID);
+            socket.emit('join_room', roomID);
         }
 
         form.val('');
@@ -23,45 +35,49 @@
         return false; // to prevent page reload
     });
 
-    $('#chat-form').submit(function() {
-        var form = $('#message'),
-            msg = form.val(),
-            cnt = $('#msg-cnt'),
-            scrollPos;
+    $('#join').click();
+    
 
-        socket.emit('chat_message', msg);
-        form.val('');
+    /* invite a friend */
 
-        cnt.append('<div class="alert alert-info chat-you">' + msg + '</div><div class="clearfix"></div>');
-        scrollPos = cnt[0].scrollHeight - cnt.height();
-        cnt.animate({ scrollTop: scrollPos }, 100);
-        return false;
+    $('#invite').click(function() {
+        $(this).attr("disabled", "disabled");
+        socket.emit('create_room');
     });
+
+    socket.on('room_created', function(room) {
+        //$('form').addClass('hide');
+        $('.container:first').append('<div class="alert alert-danger">Now joined room ' + room + '. Invite your friends by sending them this link: ' + document.URL + '?id=' + room + '</div>');
+    });
+
+
+    // $('#chat-form').submit(function() {
+    //     var form = $('#message'),
+    //         msg = form.val(),
+    //         cnt = $('#msg-cnt'),
+    //         scrollPos;
+
+    //     socket.emit('chat_message', msg);
+    //     form.val('');
+
+    //     cnt.append('<div class="alert alert-info chat-you">' + msg + '</div><div class="clearfix"></div>');
+    //     scrollPos = cnt[0].scrollHeight - cnt.height();
+    //     cnt.animate({ scrollTop: scrollPos }, 100);
+    //     return false;
+    // });
 
     $('#printstats').click(function() {
         socket.emit('print_stats');
     });
 
-    socket.on('emit_message', function(msg, username) {
-        var cnt = $('#msg-cnt'),
-            scrollPos;
+    // socket.on('emit_message', function(msg, username) {
+    //     var cnt = $('#msg-cnt'),
+    //         scrollPos;
         
-        cnt.append('<div class="alert alert-success chat-other">' + msg + '</div><div class="clearfix"></div>');
-        scrollPos = cnt[0].scrollHeight - cnt.height();
-        cnt.animate({ scrollTop: scrollPos }, 100);
-    });
-
-
-    
-    // socket.on('msg', function(msg) {
-    //     $('#messages').append($('<li>').text(msg));
+    //     cnt.append('<div class="alert alert-success chat-other">' + msg + '</div><div class="clearfix"></div>');
+    //     scrollPos = cnt[0].scrollHeight - cnt.height();
+    //     cnt.animate({ scrollTop: scrollPos }, 100);
     // });
-
-    socket.on('room_created', function(room) {
-        //$('form').addClass('hide');
-        $('#msg-cnt').append('<div class="alert alert-danger">Now joined room ' + room + '. Invite your friends by sending them this link: ' + document.URL + '?id=' + room + '</div>');
-        $('.share-link div').text(room);
-    });
 
 
     /*****************************************************
