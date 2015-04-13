@@ -19,6 +19,7 @@ function User(roomID, socketID) {
     this.userID = generateUserID();
     this.roomID = roomID;
     this.socketID = socketID;
+    this.ready = false;
 }
  
 function Room(roomID, hostID) {
@@ -27,7 +28,8 @@ function Room(roomID, hostID) {
     this.settings = new Settings();
     this.full = false;
     this.usersByID = [];
-    // this.board // the solved board for the current game
+    this.startBoard = null;
+    this.endBoard = null;
 }
 
 function Settings() {
@@ -93,19 +95,24 @@ app.get('/multiplayer', function(req, res) {
 io.on('connection', function(socket) {
     console.log('a user connected');
 
-    socket.on('create_room', function() {
-        var roomID = generateRoomID(),
-            user = new User(roomID, socket.id);
+    // initialize user on join
+    var user = new User(null, socket.id); 
+    users[user.userID] = user; // add user to global list
+    socket.uid = user.userID; // add socket var (MIGHT NOT BE NECESSARY)
 
-        users[user.userID] = user;
+    socket.on('create_room', function() {
+        var roomID = generateRoomID();
+
+        // create room
         rooms[roomID] = new Room(roomID, user.userID);
         rooms[roomID].usersByID.push(user.userID);
 
         // initialize socket values
         socket.join(roomID);
         socket.room = roomID;
+        user.roomID = roomID;
 
-        socket.emit('room_created', user.roomID);
+        socket.emit('room_created', roomID);
         console.log('room: ' + roomID + ' created!');
     });
     socket.on('join_room', function(roomID) {
@@ -113,7 +120,7 @@ io.on('connection', function(socket) {
         if (!rooms[roomID]) {
             console.log('room does not exist');
             socket.emit('incorrect_room');
-            return
+            return;
         }
 
         if (rooms[roomID].full) {
@@ -122,34 +129,46 @@ io.on('connection', function(socket) {
             return;
         }
 
-        // for (var userID in rooms[roomID].usersByID) {
-        //     if (username === users[userID]) {
-        //         console.log('username exists. try another');
-        //         socket.emit('username_taken'); // if we care about this
-        //     }
-        // }
-
-        var user = new User(roomID, socket.id);
-
-        users[user.userID] = user;
         rooms[roomID].full = true;
         rooms[roomID].usersByID.push(user.userID);
 
         // initialize socket values
         socket.join(roomID);
         socket.room = roomID;
+        user.roomID = roomID;
 
-        socket.emit('joined_room', user.roomID);
+        io.to(roomID).emit('game_ready');
         console.log('user joined room: ' + roomID);
     });
 
-    // socket.on('chat_message', function(msg) {
-    //     console.log('message: "' + msg + '" from user: ' + socket.username);
-    //     socket.broadcast.to(socket.room).emit('emit_message', msg, socket.username);
-    // });
+    socket.on('user_ready', function() {
+        var user = users[socket.uid],
+            room = rooms[user.roomID];
+
+        user.ready = true;
+
+        if (room.full && room.ready()) {
+            console.log('starting game!');
+            room.fillBoard();
+            // TODO: generate board, store it here.
+            //      then send it to the room. Make sure
+            //      you keep the solution stored here too
+            io.to(room.roomID).emit('start_game', this.startBoard);
+        }
+
+    });
+
+    socket.on('client_board_update', function(id, num) {
+        var user = users[socket.uid],
+            room = rooms[user.roomID];
+
+        io.broadcast.to(room.roomID).emit('server_board_update', id, num);
+    });
 
     socket.on('disconnect', function() {
+        removeUser(socket.uid);
         socket.leave();
+
         console.log('a user left :(');
     });
 
@@ -157,16 +176,7 @@ io.on('connection', function(socket) {
         console.log('==========================');
         console.log('rooms ')
         for (var r in rooms) {
-            room = rooms[r];
-            console.log('  room ' + room.roomID);
-            console.log('    host: ' +  room.hostID);
-            console.log('    full: ' + room.full);
-            console.log('    users:');
-            for (var u in room.usersByID) {
-                user = users[room.usersByID[u]];
-                console.log('      user ' + user.userID);
-            }
-            console.log('--------------------------');
+            rooms[r].printRoom();
         }
     });
 
@@ -186,6 +196,37 @@ function startListen() {
     });
 }
 
+function removeUser(uid) {
+    var user = users[uid],
+        room = rooms[user.roomID],
+        cand; // candidate to remove
+
+    // if user is not in a room, don't need to remove them from a room
+    if (!room) return; 
+
+    cand = room.usersByID.indexOf(uid);
+
+    room.usersByID.splice(cand);
+    delete users[uid];
+    room.full = false; 
+
+    if (room.usersByID.length === 0) {
+        console.log('deleting room');
+        delete rooms[room.roomID];
+        return;
+    }
+
+    if (room.hostID == uid) {
+        room.hostID = null;
+        console.log('host left. need transfer');
+        room.transferHost();
+    }
+
+    io.to(room.roomID).emit('restart_game');
+
+    // TODO: emit message allowing host to invite new player.
+}
+
 // generates a "unique" userID. should never duplicate
 // found here: https://gist.github.com/gordonbrander/2230317
 function generateUserID() {
@@ -196,4 +237,164 @@ function generateUserID() {
 // difference between the two is the prefix, 'u_' or 'r_'
 function generateRoomID() {
   return 'r_' + Math.random().toString(36).substr(2, 9);
+}
+
+/*******************************************************
+ *
+ *                  room prototypes
+ *
+ *******************************************************/
+
+Room.prototype.transferHost = function() {
+    // TODO: write this
+};
+
+Room.prototype.printRoom = function() {
+    console.log('--------------------------');
+    console.log('room ' + this.roomID);
+    console.log(' | host: ' +  this.hostID);
+    console.log(' | full: ' + this.full);
+    console.log(' | users:');
+
+    for (var i = 0; i < this.usersByID.length; i++) {
+        users[this.usersByID[i]].printUser();
+    }
+
+    console.log('--------------------------');
+};
+
+Room.prototype.ready = function() {
+    for (var i = 0; i < this.usersByID.length; i++) {
+        if (!users[this.usersByID[i]].ready) return false;
+    }
+    return true;
+};
+
+/*******************************************************
+ *
+ *                  user prototypes
+ *
+ *******************************************************/
+
+ User.prototype.printUser = function() {
+     console.log(' |   user ' + this.userID + ' (ready: ' + this.ready + ')');
+ };
+
+/*******************************************************
+ *
+ *                  sudoku functions
+ *
+ *******************************************************/
+
+Room.prototype.fillBoard = function() {
+    var board = new Array(81);
+    var randomNine = fishYatesShuffle(9);
+    //create base sudoku board
+    for (var i = 0; i < 9; i++) {
+        for (var j = 0; j < 9; j++) {
+            board[i * 9 + j] = (i * 3 + Math.floor(i / 3) + j) % 9 + 1;
+        }
+    }
+    //switch corresponding cols (Ex. the 2nd and 5th column)
+    for (var i = 0; i < 20; ++i) {
+        var col = Math.floor(Math.random() * 3);
+        do {
+            var swap = col + (Math.floor(Math.random() * 3) * 3); // + 0, +3, +6
+        } while (swap === 0)
+        for (var j = 0; j < 9; ++j) {
+            var tmp = board[col + (j * 9)];
+            board[col + (j * 9)] = board[swap + (j*9)];
+            board[swap + (j * 9)] = tmp;
+        }
+    }
+    //switch cols within section blocks (Ex. all columns in the first three 
+    //columns will be swapped)
+    for (var i = 0; i < 20; ++i) {
+        var block = Math.floor(Math.random() * 3);
+        do {
+            var swap1 = Math.floor(Math.random() * 3) + block * 3;
+            var swap2 = Math.floor(Math.random() * 3) + block * 3;
+        } while (swap1 === swap2)
+        for (var j = 0; j < 9; ++j) {
+            var tmp = board[swap1 + (j * 9)];
+            board[swap1 + (j * 9)] = board[swap2 + (j * 9)];
+            board[swap2 + (j * 9)] = tmp;
+        }
+    }
+    //switch rows within section blocks (Ex. all rows in the first three rows will be swapped)
+    for (var i = 0; i < 20; ++i) {
+        var block = Math.floor(Math.random() * 3);
+        do {
+            var swap1 = Math.floor(Math.random() * 3) * 9 + block * 27;
+            var swap2 = Math.floor(Math.random() * 3) * 9 + block * 27;
+        } while (swap1 === swap2)
+        for (var j = 0; j < 9; ++j) {
+            var tmp = board[swap1 + j];
+            board[swap1 + j] = board[swap2 + j];
+            board[swap2 + j] = tmp;
+        }
+    }
+    //switch numbers (Ex. all 9s will be swapped with all 7s on the board)
+    for (var i = 0; i < 20; ++i) {
+        do {
+            var numb1 = Math.ceil(Math.random() * 9);
+            var numb2 = Math.ceil(Math.random() * 9);
+        } while (numb1 === numb2)
+        for (var j = 0; j < board.length; ++j) {
+            if (board[j] === numb1) board[j] = numb2;
+            else if (board[j] === numb2) board[j] = numb1;
+        }
+    }
+    this.endBoard = new Array(81);
+
+    var temp = "";
+    for (var i = 0; i < board.length; ++i)
+    {
+        this.endBoard[i] = board[i];
+        temp += board[i];
+
+        if ((i + 1) % 9 == 0) {
+            console.log(temp);
+            temp = "";
+        }
+    }
+    console.log(temp);
+
+    hideCells();
+
+ };
+
+
+ function hideCells() {
+    var board = new Array(81);
+    var block = fishYatesShuffle(9);
+    for (var i = 0; i < 9; ++i) {
+        var cells = fishYatesShuffle(9);
+        var cur_block = block.pop();
+        var block_row = Math.floor(cur_block / 3);
+        var block_col = cur_block - block_row*3;
+        for (var j = 0; j < 4; ++ j) { 
+            var cell = cells.pop();
+            var row = Math.floor(cell/3);
+            var col = cell - row*3;
+            cell = row * 9 + block_row * 27 + col + block_col * 3;
+            board[cell] = 0;
+            // --board_size;
+        }
+    }
+}
+
+function fishYatesShuffle(size) {
+    var fishYatesArray = [];
+    for (var i = 0; i < size; i++) {
+        fishYatesArray.push(i);
+    }
+    for (var j = size - 1; j >= 0; --j) {
+        var k = Math.floor(Math.random() * (j+1));
+        var cell1 = fishYatesArray[j];
+        var cell2 = fishYatesArray[k];
+        fishYatesArray[j] = cell2;
+        fishYatesArray[k] = cell1;
+    }
+    return fishYatesArray;
 }
