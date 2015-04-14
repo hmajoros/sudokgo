@@ -66,8 +66,8 @@
 //checks to see if the board is filled (all 81 cells are valid and filled)
     function checkBoard() {
         if (board_size >= 81) {
-            var time = document.getElementById("timer").innerHTML;
-            alert("CONGRATS! " + "You finished in: " + time);
-            stopClock(); 
+            // var time = document.getElementById("timer").innerHTML;
+            // alert("CONGRATS! " + "You finished in: " + time);
+            // stopClock(); 
         } 
     };
