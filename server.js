@@ -116,6 +116,9 @@ io.on('connection', function(socket) {
         rooms[roomID] = new Room(roomID, user.userID);
         rooms[roomID].usersByID.push(user.userID);
 
+        // create board
+        rooms[roomID].fillBoard();
+
         // initialize socket values
         socket.join(roomID);
         socket.room = roomID;
@@ -158,11 +161,12 @@ io.on('connection', function(socket) {
 
         if (room.full && room.ready()) {
             console.log('starting game!');
-            room.fillBoard();
+            // room.fillBoard();
+
             // TODO: generate board, store it here.
             //      then send it to the room. Make sure
             //      you keep the solution stored here too
-            io.to(room.roomID).emit('start_game', this.startBoard);
+            io.to(room.roomID).emit('start_game', room.startBoard);
         }
 
     });
@@ -170,6 +174,8 @@ io.on('connection', function(socket) {
     socket.on('client_board_update', function(id, num) {
         var user = users[socket.uid],
             room = rooms[user.roomID];
+
+        console.log(id, num);
 
         io.broadcast.to(room.roomID).emit('server_board_update', id, num);
     });
@@ -296,21 +302,15 @@ Room.prototype.ready = function() {
     return true;
 };
 
-/*******************************************************
- *
- *                  user prototypes
- *
- *******************************************************/
+Room.prototype.printBoard = function() {
+    console.log("CURRENT BOARD (room: " + this.roomID);
+    printBoard(this.endBoard);
+};
 
- User.prototype.printUser = function() {
-     console.log(' |   user ' + this.userID + ' (ready: ' + this.ready + ')');
- };
-
-/*******************************************************
- *
- *                  sudoku functions
- *
- *******************************************************/
+Room.prototype.printStartBoard = function() {
+    console.log("STARTING BOARD (room: " + this.roomID);
+    printBoard(this.startBoard);
+};
 
 Room.prototype.fillBoard = function() {
     var board = new Array(81);
@@ -384,30 +384,71 @@ Room.prototype.fillBoard = function() {
             temp = "";
         }
     }
-    console.log(temp);
 
-    hideCells();
+    this.printBoard();
 
- };
+    this.hideCells();
+};
 
-
- function hideCells() {
-    var board = new Array(81);
-    var block = fishYatesShuffle(9);
+Room.prototype.hideCells = function() {
+    var board = this.endBoard.slice(0),
+        block = fishYatesShuffle(9);
     for (var i = 0; i < 9; ++i) {
-        var cells = fishYatesShuffle(9);
-        var cur_block = block.pop();
-        var block_row = Math.floor(cur_block / 3);
-        var block_col = cur_block - block_row*3;
-        for (var j = 0; j < 4; ++ j) { 
-            var cell = cells.pop();
-            var row = Math.floor(cell/3);
-            var col = cell - row*3;
+        var cells = fishYatesShuffle(9),
+            cur_block = block.pop(),
+            block_row = Math.floor(cur_block / 3),
+            block_col = cur_block - block_row * 3;
+
+        for (var j = 0; j < 4; ++j) { 
+            var cell = cells.pop(),
+                row = Math.floor(cell / 3),
+                col = cell - row * 3;
             cell = row * 9 + block_row * 27 + col + block_col * 3;
             board[cell] = 0;
             // --board_size;
         }
     }
+
+    this.startBoard = board.slice(0);
+    this.printStartBoard();
+};
+
+/*******************************************************
+ *
+ *                  user prototypes
+ *
+ *******************************************************/
+
+ User.prototype.printUser = function() {
+     console.log(' |   user ' + this.userID + ' (ready: ' + this.ready + ')');
+ };
+
+/*******************************************************
+ *
+ *                  sudoku functions
+ *
+ *******************************************************/
+
+function printBoard(board) {
+    if (board == null) {
+        return;
+    }
+
+    var row = "| ";
+
+    console.log('+---+---+---+---+---+---+---+---+---+');
+    for (var i = 0; i < board.length; i++) {
+        if (i % 9 == 0 && i > 0) {
+            console.log(row);
+            console.log('+---+---+---+---+---+---+---+---+---+');
+            row = "| ";
+        }
+
+        row += board[i] + " | ";
+    }
+
+    console.log(row);
+    console.log('+---+---+---+---+---+---+---+---+---+');
 }
 
 function fishYatesShuffle(size) {

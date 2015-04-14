@@ -4,9 +4,10 @@
     var socket = io();
 
     $(document).ready(function() {
-
         checkURL();
 
+        $(document).on('keydown', updateBoard);
+        
         createSudoku();
     });
 
@@ -21,9 +22,19 @@
         }
     }
 
+    function updateBoard(event) {
+        var b = new Array(81),
+            cells = $('.cell');
+
+        for (var i = 0; i < 81; i++) {
+            b[i] = cells[i].innerHTML;
+        }
+
+
+    }
+
     // join a random game
-    $('#join').click();
-    
+    $('#join').click();    
 
     // invite a friend
     $('#invite').click(function() {
@@ -47,8 +58,15 @@
         $('#start').removeClass('hide');
     });
 
-    socket.on('start_game', function() {
+    socket.on('start_game', function(board) {
         $('#start').addClass('hide');
+        for (var i = 0; i < board.length; i++) {
+            var cell = $('.cell')[i];
+            if (board[i]) {
+                cell.innerHTML = board[i];
+                cell.style.backgroundColor = '#EBEBEB';
+            }
+        }
     })
 
     $('#printstats').click(function() {
@@ -70,6 +88,6 @@
             results = regex.exec(location.search);
         return results === null ? ""
                : decodeURIComponent(results[1].replace(/\+/g, " "));
-    } 
+    }
      
 })();
