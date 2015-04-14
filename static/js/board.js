@@ -1,5 +1,13 @@
 /*By Laura Knutilla*/
 //CREATE BOARD ELEMENTS
+$(document).ready( function() {
+    createSudoku(); 
+    createNumPad();
+    var options = {
+        "backdrop" : "static"
+    }
+    $('#startModal').modal(options); //for grid layout debuggin purposes
+});
 
 //BEGIN BLANK BOARD CREATION
 /*createSudoku() creates a base board framework and is executed on page load*/
@@ -196,25 +204,50 @@ Returns the scrambled array. */
         function createNumPad() {
             var num_pad=document.getElementById('numPad');
             var num_pad_bdy=document.createElement('tbody');
-            var count = 1;
-            for(var i = 0; i < 3; ++i){
-                var row=document.createElement('tr');
-                for(var j = 0; j < 3; ++j){
-                    var td=document.createElement('td');
-                    var number = document.createElement("button");
-                    number.type = "button";
-                    if (count % 2 === 0) number.className += "btn btn-primary";
-                    else number.className += "btn btn-info";
-                    number.innerHTML = count;
-                    number.value = count;
-                    number.onclick = function(event) { handleNumPad(this); };
 
-                    td.appendChild(number);
-                    row.appendChild(td);
-                    ++count;
-                }
+            // //Number/Mark switch
+            var mark_swtch = document.createElement("button");
+            mark_swtch.type = "button";
+            mark_swtch.className += "btn btn-primary";
+            mark_swtch.id = "note_entry";
+            mark_swtch.innerHTML = "MARK";
+            mark_swtch.onclick = function(event) { markSwitch(); };
+            var row=document.createElement('tr');
+            var td=document.createElement('td');
+            td.appendChild(mark_swtch);
+            row.appendChild(td);
+            num_pad_bdy.appendChild(row);
+
+            //Num pad
+            var count = 1;
+            for(var j = 0; j < 9; ++j){
+                var row=document.createElement('tr');
+                var td=document.createElement('td');
+                var number = document.createElement("button");
+                number.type = "button";
+                if (count % 2 === 0) number.className += "btn btn-primary";
+                else number.className += "btn btn-info";
+                number.innerHTML = count;
+                number.value = count;
+                number.onclick = function(event) { handleNumPad(this); };
+
+                td.appendChild(number);
+                row.appendChild(td);
+                ++count;
                 num_pad_bdy.appendChild(row);
             }
+            //clear button
+            var clear_btn = document.createElement("button");
+            clear_btn.type = "button";
+            clear_btn.className += "btn btn-primary";
+            clear_btn.innerHTML = "X";
+            clear_btn.value = "";
+            var row=document.createElement('tr');
+            var td=document.createElement('td');
+            clear_btn.onclick = function(event) { handleKey(this.value); };
+            td.appendChild(clear_btn);
+            row.appendChild(td);
+            num_pad_bdy.appendChild(row);
 
             num_pad.appendChild(num_pad_bdy);
         };
