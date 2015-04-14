@@ -62,10 +62,15 @@
             }
 
             //Only show top 10 
+            console.log(leaderboardSortable);
             for(var i=0; i<10; ++i)
             {
-                names[count].innerHTML = leaderboardSortable[i][0];
-                times[count].innerHTML = leaderboardSortable[i][1];
+                if(i == leaderboardSortable.length)
+                {
+                    break;
+                }
+                names[i].innerHTML = leaderboardSortable[i][0];
+                times[i].innerHTML = leaderboardSortable[i][1];
             }
 
         };
