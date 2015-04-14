@@ -77,7 +77,7 @@ app.set('views', __dirname + '/views');
         header: header_content 
     });
 });*/
-app.get('/', function(req, res) {
+app.get('/singleplayer', function(req, res) {
     res.render('single_player_tpl', { 
         title: 'Home',
         header: header_content 

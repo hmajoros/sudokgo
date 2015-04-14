@@ -8,13 +8,7 @@
 {% block content %}
 <body onload = "createSudoku(); createNumPad();"><!--potential error w/ layout.html-->
     <div class="container-fluid">
-        <div class = "row-fluid">
-            <div class="col-md-6 col-sm-6" id = "sudokuBoard">
-                <div class = "col-md-12">
-                    <table id = "sudokuTable">
-                    </table>
-                </div>
-            </div>
+        <div class="row-fluid">
             <div class="col-md-6 col-sm-4">
                 <div class = "row">
                     <h3>
@@ -23,14 +17,21 @@
                           <span id = "pause_play" class="glyphicon glyphicon-pause" aria-hidden="true"></span>
                         </a>
                         <a href="#" id = "undo_btn" class="label label-success" aria-label="Undo" onclick="undo()">
-                          <span id = "undo" class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                          <span id = "undo" class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
                         </a>
                         <a href="#" id = "redo_btn" class="label label-success" aria-label="Redo" onclick="redo()">
-                          <span id = "redo" class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                          <span id = "redo" class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
                         </a>
-                    </h3>  
-                    
+                    </h3>    
                 </div>
+            </div>
+        <div class = "row-fluid">
+            <div class="col-md-6 col-sm-6" id = "sudokuBoard">
+                <div class = "col-md-12">
+                    <table id = "sudokuTable">
+                    </table>
+                </div>
+            </div>
                 <div class = "row">
                     <button id = "new" class="btn btn-danger" onclick="fillBoard(); startClock();">New Game</button>
                 </div>
