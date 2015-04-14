@@ -66,8 +66,25 @@
 //checks to see if the board is filled (all 81 cells are valid and filled)
     function checkBoard() {
         if (board_size >= 81) {
-            var time = document.getElementById("timer").innerHTML;
-            alert("CONGRATS! " + "You finished in: " + time);
             stopClock(); 
+            var time = document.getElementById("timer").innerHTML;
+            
+            //IF they enter a name, add it to the leaderboard
+            $("#finishModal .modal-body").html("You finished in " + time + ".");
+            $("#finishModal").modal("show");
         } 
     };
+
+    function sendNameToLeaderboard() {
+        var time = document.getElementById("timer").innerHTML;
+        var name = document.getElementById("nameForLeaderboard").value;
+        console.log(name, time);
+        nameAndTime = [];
+        nameAndTime[0] = name;
+        nameAndTime[1] = time;
+        return nameAndTime;
+    };
+
+
+
+

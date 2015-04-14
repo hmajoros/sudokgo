@@ -12,7 +12,9 @@ var BOARD_DIFFICULTY = 'EASY',
 
 // define global variables
 var rooms = {},
-    users = {};
+    users = {},
+    leaderboard = {};
+
 
 // define object constructors
 function User(roomID, socketID) {
@@ -88,6 +90,13 @@ app.get('/', function(req, res) {
 app.get('/multiplayer', function(req, res) {
     res.render('multi_player_tpl', {
         title: 'Multiplayer',
+        header: header_content
+    });
+});
+
+app.get('/leaderboard', function(req, res) {
+    res.render('leaderboard_tpl', {
+        title: 'Leaderboard',
         header: header_content
     });
 });
@@ -178,6 +187,23 @@ io.on('connection', function(socket) {
         for (var r in rooms) {
             rooms[r].printRoom();
         }
+    });
+
+    socket.on('update_leaderboard', function(nameAndTime) {
+        console.log('updating the leaderboard');
+        console.log(nameAndTime);
+        var name = nameAndTime[0];
+        var time = nameAndTime[1];
+        leaderboard[name] = time;
+        for (var leader in leaderboard){
+            console.log(leader, leaderboard[leader]);
+
+        }
+        socket.emit('leaderboard_updated', leaderboard);
+    });
+
+    socket.on('get_leaderboard', function() {
+        socket.emit('sent_leaderboard', leaderboard);
     });
 
 });
