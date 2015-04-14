@@ -3,64 +3,56 @@
     // initialize main global for sockets
     var socket = io();
 
-    $('#username-form').submit(function() {
-        var form = $('#username'),
-            username = form.val(),
-            roomID = getParameterByName('id');
+    $(document).ready(function() {
 
-        if (!roomID) {
-            socket.emit('create_room', username);
-        } else {
-            socket.emit('join_room', username, roomID);
+        checkURL();
+
+        createSudoku();
+    });
+
+
+    function checkURL() {
+        var roomID = getParameterByName('id');
+
+        if (roomID) {
+            socket.emit('join_room', roomID);
+            $('#join').addClass('hide');
+            $('#invite').addClass('hide');  
         }
+    }
 
-        form.val('');
-        form.blur();
-
-        $('#row-msg').removeClass('hide');
-        $('#row-username').addClass('hide');
-
-        return false; // to prevent page reload
-    });
-
-    $('#chat-form').submit(function() {
-        var form = $('#message'),
-            msg = form.val(),
-            cnt = $('#msg-cnt'),
-            scrollPos;
-
-        socket.emit('chat_message', msg);
-        form.val('');
-
-        cnt.append('<div class="alert alert-info chat-you">' + msg + '</div><div class="clearfix"></div>');
-        scrollPos = cnt[0].scrollHeight - cnt.height();
-        cnt.animate({ scrollTop: scrollPos }, 100);
-        return false;
-    });
-
-    $('#printstats').click(function() {
-        socket.emit('print_stats');
-    });
-
-    socket.on('emit_message', function(msg, username) {
-        var cnt = $('#msg-cnt'),
-            scrollPos;
-        
-        cnt.append('<div class="alert alert-success chat-other">' + msg + '</div><div class="clearfix"></div>');
-        scrollPos = cnt[0].scrollHeight - cnt.height();
-        cnt.animate({ scrollTop: scrollPos }, 100);
-    });
-
-
+    // join a random game
+    $('#join').click();
     
-    // socket.on('msg', function(msg) {
-    //     $('#messages').append($('<li>').text(msg));
-    // });
+
+    // invite a friend
+    $('#invite').click(function() {
+        $(this).attr("disabled", "disabled");
+        socket.emit('create_room');
+    });
+
+    $('#start').click(function() {
+        $(this).attr("disabled", "disabled");
+        socket.emit('user_ready');
+    })
 
     socket.on('room_created', function(room) {
         //$('form').addClass('hide');
-        $('#msg-cnt').append('<div class="alert alert-danger">Now joined room ' + room + '. Invite your friends by sending them this link: ' + document.URL + '?id=' + room + '</div>');
-        $('.share-link div').text(room);
+        $('.container:first').append('<div class="alert alert-danger">Now joined room ' + room + '. Invite your friends by sending them this link: ' + document.URL + '?id=' + room + '</div>');
+    });
+
+    socket.on('game_ready', function() {
+        $('#join').addClass('hide');
+        $('#invite').addClass('hide');
+        $('#start').removeClass('hide');
+    });
+
+    socket.on('start_game', function() {
+        $('#start').addClass('hide');
+    })
+
+    $('#printstats').click(function() {
+        socket.emit('print_stats');
     });
 
 
