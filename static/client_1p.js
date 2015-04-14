@@ -52,7 +52,12 @@
     });
 
 
-    
+    $('#submitTime').click(function() {
+        nameAndTime = sendNameToLeaderboard();
+        console.log(nameAndTime[0], nameAndTime[1]);
+        socket.emit('update_leaderboard', nameAndTime);
+        console.log("emitted signal");
+    });
     // socket.on('msg', function(msg) {
     //     $('#messages').append($('<li>').text(msg));
     // });
