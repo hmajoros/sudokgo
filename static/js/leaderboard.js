@@ -41,15 +41,31 @@
             var names = document.getElementsByClassName("nameCell");
             var times = document.getElementsByClassName("timeCell");
 
-            for(var name in leaderboard)
+            var leaderboardSortable = [];
+           
+            for (var name in leaderboard)
             {
-                if(count < 10)
+                leaderboardSortable.push([name, leaderboard[name]]); 
+                
+                //Sort based on time
+                leaderboardSortable.sort(function(a, b) 
                 {
-                    console.log("Updating leaderboard....", name, leaderboard[name])
-                    names[count].innerHTML = name;
-                    times[count].innerHTML = leaderboard[name];
-                }
-                count = count+1;
+                    var amin = (a[1].split(":"))[0];
+                    var asec = (a[1].split(":"))[1];
+                    var bmin = (b[1].split(":"))[0];
+                    var bsec = (b[1].split(":"))[1];
+                    if(amin != bmin)
+                        return amin - bmin
+                    else
+                        return asec - bsec
+                })
+            }
+
+            //Only show top 10 
+            for(var i=0; i<10; ++i)
+            {
+                names[count].innerHTML = leaderboardSortable[i][0];
+                times[count].innerHTML = leaderboardSortable[i][1];
             }
 
         };
