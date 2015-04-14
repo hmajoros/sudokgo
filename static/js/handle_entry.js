@@ -163,12 +163,17 @@
         var split_id = id.split("");
         index = parseInt(split_id[0]) * 9 + parseInt(split_id[1]);
     };
-//handles num entry/mark toggle
-    $("#note-entry").bootstrapSwitch();
-
-    $("#note-entry").on('switchChange.bootstrapSwitch', function(event, state) {
-        enter_num = state;// state: number(true) | mark(false)
-    });
+    function markSwitch() {
+        var note_inner = document.getElementById("note_entry").innerHTML;
+        if (note_inner === "NUM") {
+            enter_num = true;//number entries
+            document.getElementById("note_entry").innerHTML = "MARK";
+        }
+        else {
+            enter_num = false;//mark entries
+            document.getElementById("note_entry").innerHTML = "NUM";
+        }
+    }; 
 //END ENTRY HANDLE
 
 //BEGIN UNDOREDO SECTION

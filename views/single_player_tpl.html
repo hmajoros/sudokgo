@@ -6,57 +6,59 @@
 {% endblock %}
 
 {% block content %}
-<body onload = "createSudoku(); createNumPad();"><!--potential error w/ layout.html-->
-    <div class="container-fluid">
-        <div class = "row-fluid">
-            <div class="col-md-6 col-sm-6" id = "sudokuBoard">
-                <div class = "col-md-12">
-                    <table id = "sudokuTable">
-                    </table>
-                </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <h2><span class="label label-primary" id = "timer">00:00</span> 
+                <button type="button" id="pause_play_btn" class="btn btn-default" onclick="toggleClock()"><span id = "pause_play" class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
+                <div class="btn-group">
+                    <button type="button" id = "undo_btn" class="btn btn-default" onclick="undo()"><span id = "undo" class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
+                    <button type="button" id = "redo_btn" class="btn btn-default" onclick="redo()"><span id = "redo" class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
+                </div> 
+                </h2> 
             </div>
-            <div class="col-md-6 col-sm-4">
-                <div class = "row">
-                    <h3>
-                        <span class="label label-success" id = "timer">00:00</span>
-                        <a href="#" id = "pause_play_btn" class="label label-success" aria-label="Pause" onclick="toggleClock()">
-                          <span id = "pause_play" class="glyphicon glyphicon-pause" aria-hidden="true"></span>
-                        </a>
-                        <a href="#" id = "undo_btn" class="label label-success" aria-label="Undo" onclick="undo()">
-                          <span id = "undo" class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                        </a>
-                        <a href="#" id = "redo_btn" class="label label-success" aria-label="Redo" onclick="redo()">
-                          <span id = "redo" class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                        </a>
-                    </h3>  
-                    
-                </div>
-                <div class = "row">
-                    <button id = "new" class="btn btn-danger" onclick="fillBoard(); startClock();">New Game</button>
-                </div>
+        </div>
+        <div class = "row">
+            <div class="col-sm-5 col-sm-offset-3" id = "sudokuBoard">
+                <table id = "sudokuTable">
+                </table>
+            </div>
+            <div class = "col-sm-1">
+                <table id = "numPad">
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-7">
                 <div class = "row margin-top-05">
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#quitModal" onclick="stopClock();">
                       Quit Game
                     </button>
+               </div>
+            </div>
+        </div>
+    </div>           
+                <!--START MODAL -->
+                <div class="modal fade" id="startModal" tabindex="-1" role="dialog" aria-labelledby="startLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="startLabel">New Game</h4>
+                      </div>
+                      <div class="modal-body">
+                            <p>Currently only Easy Mode is implemented</p>
+                            <button type="checkbox" class="btn btn-default" id="easy">Easy</button>
+                            <!--<button type="checkbox" class="btn btn-warning disabled" id="med">Medium</button>
+                            <button type="checkbox" class="btn btn-danger disabled" id="hard">Hard</button> -->
+                      </div>
+                      <div class="modal-footer">
+                        <button id = "new" class="btn btn-default" data-dismiss="modal" onclick="fillBoard(); startClock();">Start</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class = "row margin-top-05">
-                    <button class="btn btn-primary" type = "submit" onclick = "solveBoard()">(debugger solve)</button>
-                </div>
-                <div class = "row margin-top-10">
-                    <input id = "note-entry" type="checkbox" name="toggle-note" data-on-color = "info" data-off-color = "primary" data-on-text = "Numbers" data-off-text = "Marks" checked>
-                </div>
-                <!--NUM PAD-->
-                <div class = "row margin-top-05">
-                    <table id = "numPad">
-                    </table>
-                </div>
-                <div class = "row margin-top-05">
-                    <button class="btn btn-primary" value = "" type = "submit" onclick = "handleKey(this.value);">Clear Cell</button>
-                </div>
-
-                
-
-                <!--Quit Modal -->
+                <!--START MODAL END-->
+                <!--QUIT MODAL -->
                 <div class="modal fade" id="quitModal" tabindex="-1" role="dialog" aria-labelledby="quitLabel" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
@@ -73,6 +75,30 @@
                       </div>
                     </div>
                   </div>
+                </div>
+                <!--QUIT MODAL END-->
+
+                <!--Finish Modal -->
+                <div class="modal fade" id="finishModal" tabindex="-1" role="dialog" aria-labelledby="finishLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="quitLabel">Congrats!</h4>
+                            </div>
+                            <div class="modal-body" id="time">
+                                You finished in 
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1">Enter username for leaderboard: </span>
+                                <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1" id = "nameForLeaderboard">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id = "submitTime" data-dismiss="modal" >Submit</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
