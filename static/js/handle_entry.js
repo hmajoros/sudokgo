@@ -126,13 +126,10 @@
             nonedit_cell = undefined;
         }
         findIndex(numb.id);
-        console.log(numb.style.backgroundColor);
         if (numb.style.backgroundColor === "rgb(235, 235, 235)") {
-            console.log("non-edit");
             handleNav(numb);
         }
         else {
-            console.log("edit");
             edit_cell = document.getElementById(numb.id);
             old_val = document.getElementById(numb.id).innerHTML;
             edit_cell.style.backgroundColor = "#CFF6FF";
@@ -163,15 +160,20 @@
         var split_id = id.split("");
         index = parseInt(split_id[0]) * 9 + parseInt(split_id[1]);
     };
-    function markSwitch() {
-        var note_inner = document.getElementById("note_entry").innerHTML;
-        if (note_inner === "NUM") {
-            enter_num = true;//number entries
-            document.getElementById("note_entry").innerHTML = "MARK";
+    function markSwitch(btn) {
+        if (btn.id === "mark") {
+            enter_num = false;
+            $("#mark").removeClass("btn-default");
+            $("#mark").addClass("btn-primary");
+            $("#number").removeClass("btn-primary");
+            $("#number").addClass("btn-default");
         }
         else {
-            enter_num = false;//mark entries
-            document.getElementById("note_entry").innerHTML = "NUM";
+            enter_num = true;
+            $("#number").removeClass("btn-default");
+            $("#number").addClass("btn-primary");
+            $("#mark").removeClass("btn-primary");
+            $("#mark").addClass("btn-default");
         }
     }; 
 //END ENTRY HANDLE

@@ -205,19 +205,6 @@ Returns the scrambled array. */
             var num_pad=document.getElementById('numPad');
             var num_pad_bdy=document.createElement('tbody');
 
-            // //Number/Mark switch
-            var mark_swtch = document.createElement("button");
-            mark_swtch.type = "button";
-            mark_swtch.className += "btn btn-primary";
-            mark_swtch.id = "note_entry";
-            mark_swtch.innerHTML = "MARK";
-            mark_swtch.onclick = function(event) { markSwitch(); };
-            var row=document.createElement('tr');
-            var td=document.createElement('td');
-            td.appendChild(mark_swtch);
-            row.appendChild(td);
-            num_pad_bdy.appendChild(row);
-
             //Num pad
             var count = 1;
             for(var j = 0; j < 9; ++j){
