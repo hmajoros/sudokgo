@@ -13,7 +13,7 @@ var BOARD_DIFFICULTY = 'EASY',
 // define global variables
 var rooms = {},
     users = {},
-    leaderboard = {};
+    leaderboard = [];
 
 
 // define object constructors
@@ -198,11 +198,10 @@ io.on('connection', function(socket) {
     socket.on('update_leaderboard', function(nameAndTime) {
         console.log('updating the leaderboard');
         console.log(nameAndTime);
-        var name = nameAndTime[0];
-        var time = nameAndTime[1];
-        leaderboard[name] = time;
+
+        leaderboard.push(nameAndTime);
         for (var leader in leaderboard){
-            console.log(leader, leaderboard[leader]);
+            console.log(leader);
 
         }
         socket.emit('leaderboard_updated', leaderboard);

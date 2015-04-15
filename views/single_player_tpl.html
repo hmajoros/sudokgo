@@ -93,7 +93,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" onclick="restartClock();">No</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="clearBoard();">Yes</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="clearBoard(), showNewGameModal();">Yes</button>
                       </div>
                     </div>
                   </div>
@@ -116,7 +116,7 @@
                                 <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1" id = "nameForLeaderboard">
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancelNameForLeaderboard()">Cancel</button>
                                 <button type="button" class="btn btn-primary" id = "submitTime" data-dismiss="modal" >Submit</button>
                             </div>
                         </div>

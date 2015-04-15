@@ -40,26 +40,20 @@
             var count = 0;
             var names = document.getElementsByClassName("nameCell");
             var times = document.getElementsByClassName("timeCell");
-
-            var leaderboardSortable = [];
-           
-            for (var name in leaderboard)
-            {
-                leaderboardSortable.push([name, leaderboard[name]]); 
                 
-                //Sort based on time
-                leaderboardSortable.sort(function(a, b) 
-                {
-                    var amin = (a[1].split(":"))[0];
-                    var asec = (a[1].split(":"))[1];
-                    var bmin = (b[1].split(":"))[0];
-                    var bsec = (b[1].split(":"))[1];
-                    if(amin != bmin)
-                        return amin - bmin
-                    else
-                        return asec - bsec
-                })
-            }
+            //Sort based on time
+            leaderboardSortable = leaderboard;
+            leaderboardSortable.sort(function(a, b) 
+            {
+                var amin = (a[1].split(":"))[0];
+                var asec = (a[1].split(":"))[1];
+                var bmin = (b[1].split(":"))[0];
+                var bsec = (b[1].split(":"))[1];
+                if(amin != bmin)
+                    return amin - bmin
+                else
+                    return asec - bsec
+            })
 
             //Only show top 10 
             console.log(leaderboardSortable);

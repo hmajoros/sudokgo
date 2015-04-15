@@ -5,18 +5,19 @@
     var nonedit_cell;//currently uneditable selected cell
     var index;//index of current cell in board;
     var enter_num = true;//bool of whether number(init) or mark
+    var enableDelete = false;
 
 //listens for key stroke, removes delete functionality as "back", 
 //and sends key hit to be handled (handleKey(key))
     $(document).bind("keydown", function(e){
         var key;
-        if( e.which == 8 ){ // 8 == backspace
+        if( e.which == 8 && enableDelete == false){ // 8 == backspace
             e.preventDefault();
             key = "";
             handleKey(key);
             return;
         }
-        if (e.keyCode >= 37 && e.keyCode <= 40 ) {
+        if (e.keyCode >= 37 && e.keyCode <= 40) {
             e.preventDefault(); 
             handleArrow(e.keyCode);
         }
@@ -72,7 +73,7 @@
             old_val = edit_cell.innerHTML;
             
             if (new_val === "" & old_val != "" && edit_cell.style.color === "black") --board_size;
-            
+                       
             //For undo/redo marks
             var old_val_undo = edit_cell.innerHTML;
 
@@ -116,8 +117,11 @@
                 undoStack.push(undoInfo);
             }
         }
-        console.log(board_size);
+        testing_board_size = updateBoardSize();
+        checkBoard();
+        console.log(board_size, testing_board_size);
     };
+
 //formats selected cell and reports index, current cell val
     function handleClick(numb) {
         if (edit_cell != undefined) edit_cell.style.backgroundColor = "white";
@@ -176,6 +180,23 @@
             $("#mark").addClass("btn-default");
         }
     }; 
+
+    function updateBoardSize()
+    {
+        var board = document.getElementsByClassName("cell");
+        testingBoardSize = 0;
+        for (var i = 0; i < 9; i++) {
+            for (var j = 0; j < 9; j++) {
+                //and isn't a mark
+                var num = board[i*9+j].innerHTML;
+                if(num != "" && board[i * 9 + j].style.color == "black" && !isNaN(num))
+                {
+                    testingBoardSize++;
+                }
+            }
+        }
+        return testingBoardSize;
+    }
 //END ENTRY HANDLE
 
 //BEGIN UNDOREDO SECTION
@@ -217,6 +238,8 @@
                 --board_size;
             }
         }
+        testing_board_size = updateBoardSize();
+        checkBoard();
         console.log(board_size);
     }
 
