@@ -5,18 +5,19 @@
     var nonedit_cell;//currently uneditable selected cell
     var index;//index of current cell in board;
     var enter_num = true;//bool of whether number(init) or mark
+    var enableDelete = false;
 
 //listens for key stroke, removes delete functionality as "back", 
 //and sends key hit to be handled (handleKey(key))
     $(document).bind("keydown", function(e){
         var key;
-        if( e.which == 8 ){ // 8 == backspace
+        if( e.which == 8 && enableDelete == false){ // 8 == backspace
             e.preventDefault();
             key = "";
             handleKey(key);
             return;
         }
-        if (e.keyCode >= 37 && e.keyCode <= 40 ) {
+        if (e.keyCode >= 37 && e.keyCode <= 40) {
             e.preventDefault(); 
             handleArrow(e.keyCode);
         }
@@ -72,7 +73,7 @@
             old_val = edit_cell.innerHTML;
             
             if (new_val === "" & old_val != "" && edit_cell.style.color === "black") --board_size;
-            
+                       
             //For undo/redo marks
             var old_val_undo = edit_cell.innerHTML;
 
@@ -117,8 +118,11 @@
                 undoStack.push(undoInfo);
             }
         }
-        console.log(board_size);
+        testing_board_size = updateBoardSize();
+        checkBoard();
+        console.log(board_size, testing_board_size);
     };
+
 //formats selected cell and reports index, current cell val
     function handleClick(numb) {
         console.log("handle click");
@@ -128,13 +132,10 @@
             nonedit_cell = undefined;
         }
         findIndex(numb.id);
-        console.log(numb.style.backgroundColor);
         if (numb.style.backgroundColor === "rgb(235, 235, 235)") {
-            console.log("non-edit");
             handleNav(numb);
         }
         else {
-            console.log("edit");
             edit_cell = document.getElementById(numb.id);
             old_val = document.getElementById(numb.id).innerHTML;
             edit_cell.style.backgroundColor = "#CFF6FF";
@@ -166,17 +167,39 @@
         var split_id = id.split("");
         index = parseInt(split_id[0]) * 9 + parseInt(split_id[1]);
     };
-    function markSwitch() {
-        var note_inner = document.getElementById("note_entry").innerHTML;
-        if (note_inner === "NUM") {
-            enter_num = true;//number entries
-            document.getElementById("note_entry").innerHTML = "MARK";
+    function markSwitch(btn) {
+        if (btn.id === "mark") {
+            enter_num = false;
+            $("#mark").removeClass("btn-default");
+            $("#mark").addClass("btn-primary");
+            $("#number").removeClass("btn-primary");
+            $("#number").addClass("btn-default");
         }
         else {
-            enter_num = false;//mark entries
-            document.getElementById("note_entry").innerHTML = "NUM";
+            enter_num = true;
+            $("#number").removeClass("btn-default");
+            $("#number").addClass("btn-primary");
+            $("#mark").removeClass("btn-primary");
+            $("#mark").addClass("btn-default");
         }
     }; 
+
+    function updateBoardSize()
+    {
+        var board = document.getElementsByClassName("cell");
+        testingBoardSize = 0;
+        for (var i = 0; i < 9; i++) {
+            for (var j = 0; j < 9; j++) {
+                //and isn't a mark
+                var num = board[i*9+j].innerHTML;
+                if(num != "" && board[i * 9 + j].style.color == "black" && !isNaN(num))
+                {
+                    testingBoardSize++;
+                }
+            }
+        }
+        return testingBoardSize;
+    }
 //END ENTRY HANDLE
 
 //BEGIN UNDOREDO SECTION
@@ -218,6 +241,8 @@
                 --board_size;
             }
         }
+        testing_board_size = updateBoardSize();
+        checkBoard();
         console.log(board_size);
     }
 

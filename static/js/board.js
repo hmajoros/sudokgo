@@ -15,6 +15,7 @@ $(document).ready( function() {
         var marked_board = [];
         var conflict_list = []; //list of currently conflicting/red board indexes
         var board_size = 81;
+        var testing_board_size = 45;
         var undoStack = [];
         var redoStack = [];
 
@@ -151,7 +152,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                 board[i].innerHTML = solved_board[i];
                 board[i].style.color = "black";
             }
-            board_size = 81;
+            testing_board_size = 81;
             checkBoard();
          };
          function clearBoard() {
@@ -204,19 +205,6 @@ Returns the scrambled array. */
         function createNumPad() {
             var num_pad=document.getElementById('numPad');
             var num_pad_bdy=document.createElement('tbody');
-
-            // //Number/Mark switch
-            var mark_swtch = document.createElement("button");
-            mark_swtch.type = "button";
-            mark_swtch.className += "btn btn-primary";
-            mark_swtch.id = "note_entry";
-            mark_swtch.innerHTML = "MARK";
-            mark_swtch.onclick = function(event) { markSwitch(); };
-            var row=document.createElement('tr');
-            var td=document.createElement('td');
-            td.appendChild(mark_swtch);
-            row.appendChild(td);
-            num_pad_bdy.appendChild(row);
 
             //Num pad
             var count = 1;

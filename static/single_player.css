@@ -37,6 +37,60 @@
 .margin-top-25 { margin-top: 2.5em; }
 .margin-top-30 { margin-top: 3.0em; }
 
+#startModal label, #startModal input {
+    height: 40px;
+    width: 150px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    font-size: 20px;
+    font-weight: normal;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+        touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+#startModal input[type="radio"] {
+    opacity:0.01;
+    z-index:100;
+}
+
+#startModal input[type="radio"]:checked + label,
+.Checked + label {
+    color: #fff;
+    background-color: #1C4365;
+    border-color: #204d74;
+}
+
+#startModal label {
+    padding:5px;
+    border:1px solid #CCC; 
+    cursor:pointer;
+    z-index:90;
+}
+
+#startModal label:hover {
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74;
+}
+
+.btn {
+  outline: none;
+}
+
+
+
 
 
 

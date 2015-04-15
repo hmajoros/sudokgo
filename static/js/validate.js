@@ -15,7 +15,6 @@
                 comp.style.color = "red";
             }
         }
-
         if (valid && numb.innerHTML != "") {
             ++board_size;
         }
@@ -65,15 +64,19 @@
     };
 //checks to see if the board is filled (all 81 cells are valid and filled)
     function checkBoard() {
-        if (board_size >= 81) {
+        if (testing_board_size >= 81) {
             stopClock(); 
             var time = document.getElementById("timer").innerHTML;
-            
+            enableDelete = true;
             //IF they enter a name, add it to the leaderboard
             $("#finishModal .modal-body").html("You finished in " + time + ".");
             $("#finishModal").modal("show");
         } 
     };
+
+    function showNewGameModal() {
+        $("#startModal").modal("show");
+    }
 
     function sendNameToLeaderboard() {
         var time = document.getElementById("timer").innerHTML;
@@ -82,7 +85,18 @@
         nameAndTime = [];
         nameAndTime[0] = name;
         nameAndTime[1] = time;
+        enableDelete = false;
+
+        //Take user to leaderboard 
+        window.location.href = "/leaderboard";
         return nameAndTime;
+    };
+
+    function cancelNameForLeaderboard(){
+        enableDelete = false;
+        //Popup modal for new game
+        showNewGameModal();
+
     };
 
 
