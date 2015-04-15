@@ -62,17 +62,15 @@
 //checks for valid 1-9 entry and either add num/mark depending on user setting
 //then validates cell
     function handleKey(key) {
+        var board = document.getElementsByClassName("cell");
         if (key != "") {
             if (key % 1 != 0 || key > 9 || key < 1) {
                 return;
             }
         }
         if (edit_cell != undefined) {
-
             new_val = key;
-            old_val = edit_cell.innerHTML;
-            
-            if (new_val === "" & old_val != "" && edit_cell.style.color === "black") --board_size;
+            old_val = edit_cell.innerHTML;            
                        
             //For undo/redo marks
             var old_val_undo = edit_cell.innerHTML;
@@ -86,11 +84,7 @@
                 edit_cell.innerHTML = new_val;
                 if (new_val != old_val) //did the user change the value
                 {
-                    removeCorrectedConflicts();
-                    if (checkValid(edit_cell))//if the user fixes a cell
-                    {
-                        if (edit_cell.style.color === "red") edit_cell.style.color = "black";
-                    }
+                    changeCell(edit_cell, new_val, old_val);
                     var undoInfo = [3];
                     undoInfo[0] = edit_cell;
                     undoInfo[1] = old_val_undo;
@@ -108,7 +102,7 @@
                     else marked_board[index].splice(val_idx,1);
                 }
                 createMarkTable();
-                removeCorrectedConflicts();
+                removeConflicts();
 
                 //For undo
                 var undoInfo = [3];
@@ -120,7 +114,7 @@
         }
         testing_board_size = updateBoardSize();
         checkBoard();
-        console.log(board_size, testing_board_size);
+        console.log(testing_board_size);
     };
 
 //formats selected cell and reports index, current cell val
@@ -138,12 +132,10 @@
             edit_cell = document.getElementById(numb.id);
             old_val = document.getElementById(numb.id).innerHTML;
             edit_cell.style.backgroundColor = "#CFF6FF";
-            removeCorrectedConflicts();
         }
     };
 //handles arrow nav to rule spots
     function handleNav(numb) {
-        console.log("handle nav");
         if (edit_cell != undefined) {
             edit_cell.style.backgroundColor = "white";
             edit_cell = undefined;
@@ -223,26 +215,16 @@
     }
     function changeCell(cell, new_value, old_value)
     {
-        var oldColor = cell.style.color;
         if(new_value == undefined)
                 cell.innerHTML = null;
         else
             cell.innerHTML = new_value;
-        removeCorrectedConflicts();
-        if (checkValid(cell))//if the user fixes a cell
-        {
-            if (cell.style.color === "red") cell.style.color = "black";
-        }
-        else if (new_value === "" && old_value != "" && cell.style.color === "black") 
-        {
-            if(!(new_value == "" && oldColor == "red"))
-            {
-                --board_size;
-            }
-        }
+
+        checkCell(cell);
+        removeConflicts();
         testing_board_size = updateBoardSize();
         checkBoard();
-        console.log(board_size);
+        console.log(testing_board_size);
     }
 
 
