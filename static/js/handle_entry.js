@@ -236,6 +236,8 @@
                 --board_size;
             }
         }
+        testing_board_size = updateBoardSize();
+        checkBoard();
         console.log(board_size);
     }
 
