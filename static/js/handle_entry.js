@@ -5,18 +5,19 @@
     var nonedit_cell;//currently uneditable selected cell
     var index;//index of current cell in board;
     var enter_num = true;//bool of whether number(init) or mark
+    var enableDelete = false;
 
 //listens for key stroke, removes delete functionality as "back", 
 //and sends key hit to be handled (handleKey(key))
     $(document).bind("keydown", function(e){
         var key;
-        if( e.which == 8 ){ // 8 == backspace
+        if( e.which == 8 && enableDelete == false){ // 8 == backspace
             e.preventDefault();
             key = "";
             handleKey(key);
             return;
         }
-        if (e.keyCode >= 37 && e.keyCode <= 40 ) {
+        if (e.keyCode >= 37 && e.keyCode <= 40) {
             e.preventDefault(); 
             handleArrow(e.keyCode);
         }
