@@ -13,7 +13,7 @@ $(document).ready( function() {
 /*createSudoku() creates a base board framework and is executed on page load*/
         var solved_board = [];
         var marked_board = [];
-        var conflict_list = [];//list of currently conflicting/red board indexes
+        var conflict_list = []; //list of currently conflicting/red board indexes
         var board_size = 81;
         var undoStack = [];
         var redoStack = [];

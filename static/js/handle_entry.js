@@ -81,6 +81,7 @@
             }
             if (enter_num)//enter number
             {
+                if (socket != null) socket.emit('update_board');
                 edit_cell.innerHTML = new_val;
                 if (new_val != old_val) //did the user change the value
                 {
@@ -120,6 +121,7 @@
     };
 //formats selected cell and reports index, current cell val
     function handleClick(numb) {
+        console.log("handle click");
         if (edit_cell != undefined) edit_cell.style.backgroundColor = "white";
         if (nonedit_cell != undefined) {
             nonedit_cell.style.backgroundColor = "#EBEBEB";
@@ -141,6 +143,7 @@
     };
 //handles arrow nav to rule spots
     function handleNav(numb) {
+        console.log("handle nav");
         if (edit_cell != undefined) {
             edit_cell.style.backgroundColor = "white";
             edit_cell = undefined;

@@ -171,6 +171,8 @@ io.on('connection', function(socket) {
 
     });
 
+    socket.on('update_board', function() { console.log("IT WORKS"); });
+
     socket.on('client_board_update', function(id, num) {
         var user = users[socket.uid],
             room = rooms[user.roomID];
@@ -238,7 +240,7 @@ function removeUser(uid) {
 
     cand = room.usersByID.indexOf(uid);
 
-    room.usersByID.splice(cand);
+    room.usersByID.splice(cand); // TODO: this may be fishy. check it later.
     delete users[uid];
     room.full = false; 
 
@@ -443,8 +445,11 @@ function printBoard(board) {
             console.log('+---+---+---+---+---+---+---+---+---+');
             row = "| ";
         }
-
-        row += board[i] + " | ";
+        if (board[i] == 0) {
+            row += "  | ";
+        } else {
+            row += board[i] + " | ";
+        }
     }
 
     console.log(row);

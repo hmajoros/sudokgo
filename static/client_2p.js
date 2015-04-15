@@ -1,4 +1,3 @@
-(function() {
 
     // initialize main global for sockets
     var socket = io();
@@ -8,7 +7,7 @@
 
         $(document).on('keydown', updateBoard);
         
-        createSudoku();
+        // createSudoku();
     });
 
 
@@ -65,6 +64,8 @@
             if (board[i]) {
                 cell.innerHTML = board[i];
                 cell.style.backgroundColor = '#EBEBEB';
+            } else {
+                cell.style.backgroundColor = 'white';
             }
         }
     })
@@ -89,5 +90,4 @@
         return results === null ? ""
                : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
-     
-})();
+
