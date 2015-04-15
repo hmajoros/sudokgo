@@ -73,7 +73,7 @@
             old_val = edit_cell.innerHTML;
             
             if (new_val === "" & old_val != "" && edit_cell.style.color === "black") --board_size;
-            
+                       
             //For undo/redo marks
             var old_val_undo = edit_cell.innerHTML;
 
@@ -117,8 +117,11 @@
                 undoStack.push(undoInfo);
             }
         }
-        console.log(board_size);
+        testing_board_size = updateBoardSize();
+        checkBoard();
+        console.log(board_size, testing_board_size);
     };
+
 //formats selected cell and reports index, current cell val
     function handleClick(numb) {
         if (edit_cell != undefined) edit_cell.style.backgroundColor = "white";
@@ -175,6 +178,23 @@
             document.getElementById("note_entry").innerHTML = "NUM";
         }
     }; 
+
+    function updateBoardSize()
+    {
+        var board = document.getElementsByClassName("cell");
+        testingBoardSize = 0;
+        for (var i = 0; i < 9; i++) {
+            for (var j = 0; j < 9; j++) {
+                //and isn't a mark
+                var num = board[i*9+j].innerHTML;
+                if(num != "" && board[i * 9 + j].style.color == "black" && !isNaN(num))
+                {
+                    testingBoardSize++;
+                }
+            }
+        }
+        return testingBoardSize;
+    }
 //END ENTRY HANDLE
 
 //BEGIN UNDOREDO SECTION

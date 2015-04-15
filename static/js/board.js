@@ -15,6 +15,7 @@ $(document).ready( function() {
         var marked_board = [];
         var conflict_list = [];//list of currently conflicting/red board indexes
         var board_size = 81;
+        var testing_board_size = 45;
         var undoStack = [];
         var redoStack = [];
 
@@ -151,7 +152,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                 board[i].innerHTML = solved_board[i];
                 board[i].style.color = "black";
             }
-            board_size = 81;
+            testing_board_size = 81;
             checkBoard();
          };
          function clearBoard() {

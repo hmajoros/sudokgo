@@ -15,7 +15,6 @@
                 comp.style.color = "red";
             }
         }
-
         if (valid && numb.innerHTML != "") {
             ++board_size;
         }
@@ -65,7 +64,7 @@
     };
 //checks to see if the board is filled (all 81 cells are valid and filled)
     function checkBoard() {
-        if (board_size >= 81) {
+        if (testing_board_size >= 81) {
             stopClock(); 
             var time = document.getElementById("timer").innerHTML;
             enableDelete = true;
