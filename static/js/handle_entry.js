@@ -55,7 +55,7 @@
             var numbID = [row, col, block];
             var new_id = numbID.join('');
             var new_cell = document.getElementById(new_id); 
-            if (new_cell.style.backgroundColor === "white") handleClick(new_cell);
+            if (new_cell.style.backgroundColor === "white" || new_cell.style.backgroundColor === "#FFCBA6") handleClick(new_cell);
             else handleNav(new_cell);   
         }
     };
@@ -82,7 +82,7 @@
             }
             if (enter_num)//enter number
             {
-                if (socket != null) socket.emit('update_board');
+                if (socket != null) socket.emit('client_board_update', edit_cell.id, new_val);
                 edit_cell.innerHTML = new_val;
                 if (new_val != old_val) //did the user change the value
                 {
@@ -125,7 +125,6 @@
 
 //formats selected cell and reports index, current cell val
     function handleClick(numb) {
-        console.log("handle click");
         if (edit_cell != undefined) edit_cell.style.backgroundColor = "white";
         if (nonedit_cell != undefined) {
             nonedit_cell.style.backgroundColor = "#EBEBEB";

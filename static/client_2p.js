@@ -68,7 +68,15 @@
                 cell.style.backgroundColor = 'white';
             }
         }
-    })
+    });
+
+    socket.on('insert_entry', function(id) {
+        $('#' + id).css({ backgroundColor: '#FFCBA6' });
+    });
+
+    socket.on('remove_entry', function(id) {
+        $('#' + id).css({ backgroundColor: 'white' });
+    });
 
     $('#printstats').click(function() {
         socket.emit('print_stats');

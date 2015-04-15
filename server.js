@@ -171,15 +171,25 @@ io.on('connection', function(socket) {
 
     });
 
-    socket.on('update_board', function() { console.log("IT WORKS"); });
 
     socket.on('client_board_update', function(id, num) {
         var user = users[socket.uid],
-            room = rooms[user.roomID];
+            room = rooms[user.roomID],
+            row = parseInt(id.substring(0, 1), 10),
+            col = parseInt(id.substring(1, 2), 10),
+            blockID = (row * 9) + col;
 
-        console.log(id, num);
+            console.log(row, col);
 
-        io.broadcast.to(room.roomID).emit('server_board_update', id, num);
+        console.log("user " + user.userID + " entered " + num + " in square id: " + blockID);
+
+        if (num) { // user added a number
+            if (room.endBoard[blockID] == num) {
+                socket.broadcast.to(room.roomID).emit('insert_entry', id);
+            }
+        } else { // user removed a number
+            socket.broadcast.to(room.roomID).emit('remove_entry', id);
+        }
     });
 
     socket.on('disconnect', function() {
