@@ -6,6 +6,8 @@
         checkURL();
 
         $(document).on('keydown', updateBoard);
+
+        socket.emit('create_room');
         
         // createSudoku();
         // createNumPad();
@@ -34,10 +36,10 @@
     }
 
     // join a random game
-    $('#join').click();    
+    /*$('#join').click();    
 
     // invite a friend
-    $('#invite').click(function() {
+    /$('#invite').click(function() {
         $(this).attr("disabled", "disabled");
         socket.emit('create_room');
     });
@@ -45,10 +47,12 @@
     $('#start').click(function() {
         $(this).attr("disabled", "disabled");
         socket.emit('user_ready');
-    })
+    })*/
 
     socket.on('room_created', function(room) {
         //$('form').addClass('hide');
+        $("#inviteModal .modal-body").html('Invite your friends by sending them this link: ' + document.URL + '?id=' + room);
+        $("#inviteModal").modal("show");
         $('.container:first').append('<div class="alert alert-danger">Now joined room ' + room + '. Invite your friends by sending them this link: ' + document.URL + '?id=' + room + '</div>');
     });
 
