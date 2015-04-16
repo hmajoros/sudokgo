@@ -74,6 +74,14 @@ body {
     margin-bottom: 8px;
 }
 
+.mark_td {
+    padding-top: 5px;
+    line-height: 1em;
+    font-size: x-small;
+    color: "white";
+    height: 0;
+}
+
 .btn-primary 
 { 
     background-color: #303F9F; 
