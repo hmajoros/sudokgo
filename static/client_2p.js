@@ -7,7 +7,7 @@
 
         $(document).on('keydown', updateBoard);
 
-        socket.emit('create_room');
+        //socket.emit('create_room');
         
         // createSudoku();
         // createNumPad();
@@ -36,10 +36,11 @@
     }
 
     // join a random game
-    /*$('#join').click();    
+    //$('#join').click();    
 
     // invite a friend
-    /$('#invite').click(function() {
+    $('#invite').click(function() {
+        console.log("clicked");
         $(this).attr("disabled", "disabled");
         socket.emit('create_room');
     });
@@ -47,23 +48,26 @@
     $('#start').click(function() {
         $(this).attr("disabled", "disabled");
         socket.emit('user_ready');
-    })*/
+    })
 
     socket.on('room_created', function(room) {
         //$('form').addClass('hide');
+        console.log("modalling");
         $("#inviteModal .modal-body").html('Invite your friends by sending them this link: ' + document.URL + '?id=' + room);
         $("#inviteModal").modal("show");
         $('.container:first').append('<div class="alert alert-danger">Now joined room ' + room + '. Invite your friends by sending them this link: ' + document.URL + '?id=' + room + '</div>');
     });
 
     socket.on('game_ready', function() {
-        $('#join').addClass('hide');
+        //spinner start
+        //$('#join').addClass('hide');
         $('#invite').addClass('hide');
-        $('#start').removeClass('hide');
+        $('#start').removeClass('hide'); //start game button appear
         $('.alert').remove();
     });
 
     socket.on('start_game', function(board) {
+        //spinner stop
         $('#start').addClass('hide');
         for (var i = 0; i < board.length; i++) {
             var cell = $('.cell')[i];

@@ -9,6 +9,12 @@
     
     <div class="container">
       <div class="row">
+        <div class="col-xs-2 col-xs-offset-5">
+          <button type="button" class="btn btn-primary hide" id="start">Start Game</button>
+          <button type="button" class="btn btn-success" id="invite">Invite Friends</button>
+        </div>
+      </div>
+      <div class="row">
           <div class="col-xs-12 col-sm-6 col-sm-offset-3 text-center">
               <h2><span class="label label-primary" id = "timer">00:00</span> 
               <button type="button" id="pause_play_btn" class="btn btn-default hide" onclick="toggleClock()"><span id = "pause_play" class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
@@ -35,6 +41,9 @@
           </div>
       </div>
     </div> <!-- .container -->
+
+    <div id="spinner" class="hide">
+    </div>
 
     <div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="inviteLabel" aria-hidden="true">
       <div class="modal-dialog">
