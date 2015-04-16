@@ -249,6 +249,7 @@ Returns the scrambled array. */
                     td.innerHTML = marked_board[index][i*3+j];
                     td.style.fontSize = "x-small";
                     td.style.color = "white";
+                    td.style.lineHeight = "1em";
                 }
                 else {
                     td.innerHTML = "";
