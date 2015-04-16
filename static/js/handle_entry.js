@@ -22,7 +22,7 @@
         } else if (e.keyCode >= 37 && e.keyCode <= 40) {
             e.preventDefault(); 
             handleArrow(e.keyCode);
-        } else if (key > 0 || key < 10) {
+        } else if (key > 0 && key < 10) {
             handleKey(key);
         }
     });
