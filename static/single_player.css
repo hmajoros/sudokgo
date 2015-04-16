@@ -38,8 +38,8 @@
     border: 1px solid transparent;
     border-radius: 4px;
     color: #fff;
-    background-color: #337ab7;
-    border-color: #2e6da4;
+    background-color: #5965B2;
+    border-color: #5965B2;
     font-size: 20px;
     font-weight: normal;
     line-height: 1.42857143;
@@ -63,8 +63,8 @@
 #startModal input[type="radio"]:checked + label,
 .Checked + label {
     color: #fff;
-    background-color: #1C4365;
-    border-color: #204d74;
+    background-color: #26327F;
+    border-color: #26327F;
 }
 
 #startModal label {
@@ -76,8 +76,8 @@
 
 #startModal label:hover {
     color: #fff;
-    background-color: #286090;
-    border-color: #204d74;
+    background-color: #303F9F;
+    border-color: #303F9F;
 }
 
 .btn {
