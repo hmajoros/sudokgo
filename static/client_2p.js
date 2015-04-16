@@ -8,6 +8,7 @@
         $(document).on('keydown', updateBoard);
         
         // createSudoku();
+        // createNumPad();
     });
 
 
@@ -55,6 +56,7 @@
         $('#join').addClass('hide');
         $('#invite').addClass('hide');
         $('#start').removeClass('hide');
+        $('.alert').remove();
     });
 
     socket.on('start_game', function(board) {
@@ -63,11 +65,10 @@
             var cell = $('.cell')[i];
             if (board[i]) {
                 cell.innerHTML = board[i];
-                cell.addClass('cell-prefilled');
-            } else {
-                cell.addClass('cell'); // TODO: is tis needed?
+                $('#' + cell.id).addClass('cell-prefilled');
             }
         }
+        startClock();
     });
 
     socket.on('insert_entry', function(id) {
@@ -75,7 +76,7 @@
     });
 
     socket.on('remove_entry', function(id) {
-        $('#' + id).css({ backgroundColor: 'white' });
+        // $('#' + id).css({ backgroundColor: 'white' });
         $('#' + id).removeClass('opponent-solve');
     });
 

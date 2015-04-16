@@ -186,6 +186,8 @@ io.on('connection', function(socket) {
         if (num) { // user added a number
             if (room.endBoard[blockID] == num) {
                 socket.broadcast.to(room.roomID).emit('insert_entry', id);
+            } else {
+                socket.broadcast.to(room.roomID).emit('remove_entry', id);
             }
         } else { // user removed a number
             socket.broadcast.to(room.roomID).emit('remove_entry', id);

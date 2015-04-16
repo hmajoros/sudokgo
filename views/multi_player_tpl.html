@@ -8,48 +8,31 @@
 {% block content %}
     
     <div class="container">
-
-        <div class="row">
-            <div class="col-md-6 col-sm-6" id = "sudokuBoard">
-                <div class = "col-md-12">
-                    <table id = "sudokuTable" style="margin: auto"> <!-- fix this later -->
-                    </table>
-                </div>
-            </div>
-        </div>
-      
-      <!-- <div class="jumbotron">
-        
-        <div class="row" id="row-username">
-          <div class="col-xs-12 col-md-6 col-md-offset-3">
-            
-            <form id="username-form">
-              <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Enter username" autocomplete="off">
+      <div class="row">
+          <div class="col-xs-12 col-sm-6 col-sm-offset-3 text-center">
+              <h2><span class="label label-primary" id = "timer">00:00</span> 
+              <button type="button" id="pause_play_btn" class="btn btn-default" onclick="toggleClock()"><span id = "pause_play" class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
+              <div class="btn-group">
+                  <button type="button" id = "undo_btn" class="btn btn-default" onclick="undo()"><span id = "undo" class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
+                  <button type="button" id = "redo_btn" class="btn btn-default" onclick="redo()"><span id = "redo" class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button>
               </div>
-
-              <button class="btn btn-danger">Create A Room</button>
-            </form>
+              <div class="btn-group">
+                  <button type="button" id = "number" class="btn btn-primary" onclick="markSwitch(this)">Number</button>
+                  <button type="button" id = "mark" class="btn btn-default" onclick="markSwitch(this)">Mark</button>
+              </div> 
+              </h2> 
           </div>
-        </div>
-
-        <div class="row hide" id="row-msg">
-          <div class="col-xs-12 col-md-6 col-md-offset-3">
-
-            <div id="msg-cnt"></div> <!-- messages added automatically //
-
-            <form id="chat-form" class="form-inline">
-              <div class="input-group">
-                <input type="text" class="form-control" id="message" placeholder="send message" autocomplete="off">
-                <span class="input-group-btn">
-                  <button class="btn btn-success">Send</button>
-                </span>
-              </div>
-            </form>
+          <div class="col-sm-3"></div>
+      </div>
+      <div class="row">
+          <div class="col-xs-11 col-sm-6 col-sm-offset-3" id = "sudokuBoard">
+              <table id = "sudokuTable">
+              </table>
           </div>
-        </div> -->
-
+          <div class="col-xs-1 col-sm-1 text-center">
+              <table id = "numPad">
+              </table>
+          </div>
       </div>
 
       <div class="row margin-top-10">

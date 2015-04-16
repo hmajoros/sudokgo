@@ -10,6 +10,14 @@ body {
     min-width: 550px;
 }
 
+#sudokuTable {
+    margin: auto;
+}
+
+#numPad {
+    margin: auto;
+}
+
 /* classes for different tile states */
 .cell {
     display: block;
@@ -36,12 +44,18 @@ body {
   background-color: #FFCBA6;
 }
 
+.opponent-solve {
+    background-color: #FFC107;
+    color: black;
+}
+
 /*.cell-active {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }*/
 
 .cell.cell-active { background-color: #5C6BC0; }
 .cell-prefilled.cell-active { background-color: #283593; }
+.opponent-solve.cell-active { background-color: #FFA000; }
 
 .cell-conflict { background-color: #F44336 !important; }
 
@@ -60,20 +74,5 @@ body {
     margin-bottom: 8px;
 }
 
-
-/*.cell[id$='a'],
-.cell[id$='c'],
-.cell[id$='e'],
-.cell[id$='g'],
-.cell[id$='i'] {
-    background-color: #CFD8DC;
-}
-
-.cell[id$='b'],
-.cell[id$='d'],
-.cell[id$='f'],
-.cell[id$='h'] {
-    background-color: #B0BEC5;
-}*/
 
 
