@@ -74,5 +74,35 @@ body {
     margin-bottom: 8px;
 }
 
+.btn-primary 
+{ 
+    background-color: #303F9F; 
+    border-color: #303F9F; 
+}
+.btn-primary:hover 
+{ 
+    background-color: #26327F; 
+    border-color:#26327F;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background-color: #26327F; 
+    border-color:#26327F; 
+}
+.label-primary 
+{ 
+    background-color: #303F9F; 
+    border-color: #303F9F; 
+}
+.btn-info
+{ 
+    background-color: #7986CB;
+    border-color: #7986CB 
+}
+.btn-info:hover 
+{ 
+    background-color: #616BA2; 
+    border-color: #616BA2;
+}
+
 
 
