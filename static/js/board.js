@@ -152,6 +152,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
             var board = document.getElementsByClassName("cell");
             for (var i = 0; i < board.length; i++) {
                 board[i].innerHTML = "";
+                board[i].className = 'cell';
             }
             document.getElementById("timer").innerHTML = "00:00";
             board_size = 0;
@@ -238,26 +239,28 @@ Returns the scrambled array. */
 //CREATE MARK TABLE//
 //createMarkTable() creates a table(3x3) and places it within the selected cell for marking
     function createMarkTable() {
+        console.log(index);
+        console.log(marked_board[index]);
         var td_table=document.createElement('table');
         var td_bdy=document.createElement('tbody');
 
-        for (var i = 0; i < 3; ++i) {
+        for (var i = 0; i < 3; ++i)//rows
+        {
             var row=document.createElement('tr');
             for(var j = 0; j < 3; ++j){
                 var td=document.createElement('td');
-                if ((i*3+j) < marked_board[index].length) {
+                if ((i*3+j) < marked_board[index].length)
+                {
                     td.innerHTML = marked_board[index][i*3+j];
-                    td.style.fontSize = "x-small";
-                    td.style.color = "white";
-                    td.style.lineHeight = "1em";
+                    td.className += "mark_td";
                 }
-                else {
-                    td.innerHTML = "";
-                }
+                else 
+                {td.innerHTML = "";}
                 row.appendChild(td);
             }
             td_bdy.appendChild(row);
         }
+        console.log(td_bdy);
         td_table.appendChild(td_bdy);
         td_table.style.display = "inline-block";
 

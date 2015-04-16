@@ -194,6 +194,13 @@ io.on('connection', function(socket) {
         }
     });
 
+    socket.on('game_over', function() {
+        var user = users[socket.uid],
+            room = rooms[user.roomID];
+            
+        socket.broadcast.to(room.roomID).emit('game_loss');
+    });
+
     socket.on('disconnect', function() {
         removeUser(socket.uid);
         socket.leave();

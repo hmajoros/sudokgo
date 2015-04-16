@@ -55,9 +55,15 @@ function removeConflicts() {
             stopClock(); 
             var time = document.getElementById("timer").innerHTML;
             enableDelete = true;
-            //IF they enter a name, add it to the leaderboard
-            $("#finishModal .modal-body").html("You finished in " + time + ".");
-            $("#finishModal").modal("show");
+            if (socket) {
+                socket.emit('game_over');
+                $("#finishModal .modal-body").html("You finished in " + time + ".");
+                $("#finishModal").modal("show");
+            } else {
+                //IF they enter a name, add it to the leaderboard
+                $("#finishModal .modal-body").html("You finished in " + time + ".");
+                $("#finishModal").modal("show");
+            }
         } 
     };
 

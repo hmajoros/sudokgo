@@ -84,6 +84,13 @@
         $('#' + id).removeClass('opponent-solve');
     });
 
+    socket.on('game_loss', function() {
+        stopClock();
+        $("#finishModal .modal-title").html("Game Over");
+        $("#finishModal .modal-body").html("You lost :(");
+        $("#finishModal").modal("show");
+    });
+
     $('#printstats').click(function() {
         socket.emit('print_stats');
     });
