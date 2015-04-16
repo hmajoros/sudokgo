@@ -7,111 +7,102 @@
     var enter_num = true;//bool of whether number(init) or mark
     var enableDelete = false;
 
+    var activeCell; // current selected cell
+
 //listens for key stroke, removes delete functionality as "back", 
 //and sends key hit to be handled (handleKey(key))
     $(document).bind("keydown", function(e){
-        var key;
-        if( e.which == 8 && enableDelete == false){ // 8 == backspace
+        var key = String.fromCharCode(e.keyCode);
+
+        if (e.which == 8 && enableDelete == false) { // 8 == backspace
             e.preventDefault();
             key = "";
             handleKey(key);
             return;
-        }
-        if (e.keyCode >= 37 && e.keyCode <= 40) {
+        } else if (e.keyCode >= 37 && e.keyCode <= 40) {
             e.preventDefault(); 
             handleArrow(e.keyCode);
+        } else if (key > 0 || key < 10) {
+            handleKey(key);
         }
-        key = String.fromCharCode(e.keyCode);
-        handleKey(key);
     });
 
     function handleArrow(code) {
-        var split_id = undefined;
-        if (edit_cell != undefined) {
-            split_id = edit_cell.id.split("");
-        }
-        if (nonedit_cell != undefined) { //will overrule edit_cell
-            split_id = nonedit_cell.id.split("");
-        }
-        if (split_id != undefined) {
-            var row = parseInt(split_id[0]);
-            var col = parseInt(split_id[1]);
-            var block;
-            if (code === 37) --col;
-            if (code === 38) --row;
-            if (code === 39) ++col;
-            if (code === 40) ++row;
+        if (!activeCell) return; // can't move if there isn't a currently selected cell
 
-            if (row < 3 && col < 3) block = 'a';
-            else if (row < 3 && col < 6) block = 'b';
-            else if (row < 3 && col > 5) block = 'c';
-            else if (row < 6 && col < 3) block = 'd';
-            else if (row < 6 && col < 6) block = 'e';
-            else if (row < 6 && col > 5) block = 'f';
-            else if (row > 5 && col < 3) block = 'g';
-            else if (row > 5 && col < 6) block = 'h';
-            else block = 'i';
+        var cellID = $(activeCell)[0].id,
+            row = cellID.substring(0, 1),
+            col = cellID.substring(1, 2),
+            block = cellID.substring(2, 3),
+            newID, newCell;
 
-            var numbID = [row, col, block];
-            var new_id = numbID.join('');
-            var new_cell = document.getElementById(new_id); 
-            if (new_cell.style.backgroundColor === "white" || new_cell.style.backgroundColor === "#FFCBA6") handleClick(new_cell);
-            else handleNav(new_cell);   
-        }
+        // update position
+        if (code === 37 && col != 0) --col;
+        if (code === 38 && row != 0) --row;
+        if (code === 39 && col != 8) ++col;
+        if (code === 40 && row != 8) ++row;
+
+        // update block (if needed)
+        if (row < 3 && col < 3) block = 'a';
+        else if (row < 3 && col < 6) block = 'b';
+        else if (row < 3 && col > 5) block = 'c';
+        else if (row < 6 && col < 3) block = 'd';
+        else if (row < 6 && col < 6) block = 'e';
+        else if (row < 6 && col > 5) block = 'f';
+        else if (row > 5 && col < 3) block = 'g';
+        else if (row > 5 && col < 6) block = 'h';
+        else block = 'i';
+
+        newID = [row, col, block].join('');
+        newCell = $('#' + newID)[0];
+
+        handleClick(newCell);
     };
+    
 //checks for valid 1-9 entry and either add num/mark depending on user setting
 //then validates cell
     function handleKey(key) {
-        var board = document.getElementsByClassName("cell");
-        if (key != "") {
-            if (key % 1 != 0 || key > 9 || key < 1) {
-                return;
-            }
+        if (!activeCell) return; // no cell currently selected
+        if ($(activeCell).hasClass('cell-prefilled')) return; // cannot edit
+
+        var oldVal = $(activeCell)[0].innerHTML;
+
+        // TODO: Do we need this? only need it for marks maybe???
+        while ($(activeCell)[0].hasChildNodes()) {
+            $(activeCell)[0].removeChild($(activeCell)[0].firstChild);
         }
-        if (edit_cell != undefined) {
-            new_val = key;
-            old_val = edit_cell.innerHTML;            
-                       
-            //For undo/redo marks
-            var old_val_undo = edit_cell.innerHTML;
 
-            while (edit_cell.hasChildNodes()) {
-                edit_cell.removeChild(edit_cell.firstChild);
-            }
-            if (enter_num)//enter number
-            {
-                if (socket != null) socket.emit('client_board_update', edit_cell.id, new_val);
-                edit_cell.innerHTML = new_val;
-                if (new_val != old_val) //did the user change the value
-                {
-                    changeCell(edit_cell, new_val, old_val);
-                    var undoInfo = [3];
-                    undoInfo[0] = edit_cell;
-                    undoInfo[1] = old_val_undo;
-                    undoInfo[2] = new_val;
-                    undoStack.push(undoInfo);
-                }
-            }
-            else //enter mark
-            {                      
-                if (new_val === "" && marked_board[index].length > 0) marked_board[index].pop();
-                else
-                {
-                    var val_idx = marked_board[index].indexOf(new_val);
-                    if (val_idx === -1) marked_board[index].push(new_val);
-                    else marked_board[index].splice(val_idx,1);
-                }
-                createMarkTable();
-                removeConflicts();
-
-                //For undo
+        if (enter_num) {
+            if (socket != null) socket.emit('client_board_update', activeCell.id, key);
+            if (key != oldVal) {
+                changeCell(activeCell, key, oldVal);
                 var undoInfo = [3];
-                undoInfo[0] = edit_cell;
-                undoInfo[1] = old_val_undo;
-                undoInfo[2] = edit_cell.innerHTML;
+                undoInfo[0] = activeCell;
+                undoInfo[1] = oldVal;
+                undoInfo[2] = key;
                 undoStack.push(undoInfo);
             }
+
+        } else { // marks
+            if (key === "") {
+                marked_board[index] = [];
+            } else {
+                var val_idx = marked_board[index].indexOf(key);
+                if (val_idx === -1) marked_board[index].push(key);
+                else marked_board[index].splice(val_idx,1);
+            }
+
+            createMarkTable();
+            removeConflicts();
+
+            // For undo
+            var undoInfo = [3];
+            undoInfo[0] = activeCell;
+            undoInfo[1] = oldVal;
+            undoInfo[2] = key;
+            undoStack.push(undoInfo);
         }
+
         testing_board_size = updateBoardSize();
         checkBoard();
         console.log(testing_board_size);
@@ -119,44 +110,24 @@
 
 //formats selected cell and reports index, current cell val
     function handleClick(numb) {
-        if (edit_cell != undefined) edit_cell.style.backgroundColor = "white";
-        if (nonedit_cell != undefined) {
-            nonedit_cell.style.backgroundColor = "#EBEBEB";
-            nonedit_cell = undefined;
-        }
-        findIndex(numb.id);
-        if (numb.style.backgroundColor === "rgb(235, 235, 235)") {
-            handleNav(numb);
-        }
-        else {
-            edit_cell = document.getElementById(numb.id);
-            old_val = document.getElementById(numb.id).innerHTML;
-            edit_cell.style.backgroundColor = "#CFF6FF";
-        }
-    };
-//handles arrow nav to rule spots
-    function handleNav(numb) {
-        if (edit_cell != undefined) {
-            edit_cell.style.backgroundColor = "white";
-            edit_cell = undefined;
-        }
-        if (nonedit_cell != undefined) nonedit_cell.style.backgroundColor = "#EBEBEB";
-        nonedit_cell = numb;
-        nonedit_cell.style.backgroundColor = "#B5B5B5";
+        if (!numb) return; // nothing here
+
+        $(activeCell).removeClass('cell-active');
+        $(numb).addClass('cell-active');
+        activeCell = numb;
+
+        findIndex(activeCell.id);
     };
 //handles numbers entered in num pad
     function handleNumPad(number) {
-        if (edit_cell === undefined) return;
-        var selected = document.getElementById(edit_cell.id);
-        old_val = selected.value;
-        if (old_val === number.value) selected.value = "";
-        else selected.value = number.value;
-        handleKey(selected.value);
+        if (!activeCell) return;
+        handleKey(number.value);
     };
 //finds index of cell by it's id
     function findIndex(id) {
-        var split_id = id.split("");
-        index = parseInt(split_id[0]) * 9 + parseInt(split_id[1]);
+        var row = parseInt(id.substring(0, 1), 10),
+            col = parseInt(id.substring(1, 2), 10);
+        index = (row * 9) + col;
     };
     function markSwitch(btn) {
         if (btn.id === "mark") {
@@ -175,16 +146,14 @@
         }
     }; 
 
-    function updateBoardSize()
-    {
+    function updateBoardSize() {
         var board = document.getElementsByClassName("cell");
         testingBoardSize = 0;
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j < 9; j++) {
                 //and isn't a mark
-                var num = board[i*9+j].innerHTML;
-                if(num != "" && board[i * 9 + j].style.color == "black" && !isNaN(num))
-                {
+                var num = board[i * 9 + j].innerHTML;
+                if (num > 0 && num < 10) {
                     testingBoardSize++;
                 }
             }
@@ -199,7 +168,7 @@
         if(undoStack.length > 0)
         {
             var info = undoStack.pop();
-            changeCell(info[0],info[1], info[2]);
+            changeCell(info[0], info[1], info[2]);
             redoStack.push(info);
         }
         
@@ -216,7 +185,7 @@
     function changeCell(cell, new_value, old_value)
     {
         if(new_value == undefined)
-                cell.innerHTML = null;
+                cell.innerHTML = null; // TODO: will this ever trigger?
         else
             cell.innerHTML = new_value;
 

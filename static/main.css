@@ -6,17 +6,74 @@ body {
     font-family: RobotoDraft;
 }
 
-#msg-cnt {
-    height: 400px;
-    overflow: scroll;
+#sudokuBoard {
+    min-width: 550px;
 }
 
-.chat-other {
+/* classes for different tile states */
+.cell {
+    display: block;
+    width: 2em;
+    height: 2em;
     float: left;
-    max-width: 67%;
+    margin: 1px;
+    line-height: 2em;
+
+    text-align: center;
+    font-size: 1.8em; 
+
+    background-color: #7986CB;
+    color: white;
 }
 
-.chat-you {
-    float: right;
-    max-width: 67%;
-    
+.cell-prefilled {
+    background-color: #303F9F;
+    /*border: 1px solid #546E7A;*/
+    color: white;
+}
+
+.cell-solved {
+  background-color: #FFCBA6;
+}
+
+/*.cell-active {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}*/
+
+.cell.cell-active { background-color: #5C6BC0; }
+.cell-prefilled.cell-active { background-color: #283593; }
+
+.cell-conflict { background-color: #F44336 !important; }
+
+/* might be a better way to do this... but do I care right now? */
+.cell[id$='2a'], .cell[id$='2b'], .cell[id$='2c'],
+.cell[id$='2d'], .cell[id$='2e'], .cell[id$='2f'],
+.cell[id$='2g'], .cell[id$='2h'], .cell[id$='2i'],
+.cell[id$='5a'], .cell[id$='5b'], .cell[id$='5c'],
+.cell[id$='5d'], .cell[id$='5e'], .cell[id$='5f'],
+.cell[id$='5g'], .cell[id$='5h'], .cell[id$='5i'] {
+    margin-right: 8px;
+}
+
+/* look how much easier this one was... ¯\_(ツ)_/¯ */
+.cell[id^='2'], .cell[id^='5'] {
+    margin-bottom: 8px;
+}
+
+
+/*.cell[id$='a'],
+.cell[id$='c'],
+.cell[id$='e'],
+.cell[id$='g'],
+.cell[id$='i'] {
+    background-color: #CFD8DC;
+}
+
+.cell[id$='b'],
+.cell[id$='d'],
+.cell[id$='f'],
+.cell[id$='h'] {
+    background-color: #B0BEC5;
+}*/
+
+

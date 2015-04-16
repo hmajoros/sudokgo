@@ -4,23 +4,32 @@
 var conflict_list = [];
 
 function checkCell(cell) {
-    var board = document.getElementsByClassName("cell");
-    var check = document.getElementById(cell.id);
-    check = check.id.split("");
+    console.log(cell);
+    // var board = document.getElementsByClassName("cell");
+    var board = $('.cell'),
+        cellID = $(cell)[0].id,
+        rowCheck = cellID.substring(0, 1),
+        colCheck = cellID.substring(1, 2),
+        blockCheck = cellID.substring(2, 3);
+
+    // var check = document.getElementById(cell.id);
+    // check = check.id.split("");
     var valid = true;
     for (var i = 0; i < board.length; ++i) {
-        var boardId = board[i].id;
-        boardId = boardId.split("");
-        var row = boardId[0];
-        var col = boardId[1];
-        var block = boardId[2];
-        if (row === check[0] && col === check[1]) continue;
-        if (row === check[0] || col === check[1] || block === check[2]) {
-            if (cell.innerHTML === board[i].innerHTML && cell.innerHTML != "") {
+        var boardID = board[i].id,
+            row = boardID.substring(0, 1),
+            col = boardID.substring(1, 2),
+            block = boardID.substring(2, 3);
+
+        if (row === rowCheck && col === colCheck) continue;
+        if (row === rowCheck || col === colCheck || block === blockCheck) {
+            if (cell.innerHTML && cell.innerHTML === board[i].innerHTML) {
                 valid = false;
                 //will add to conflict list unless reviewing conflict list
-                cell.style.color = "red";
-                board[i].style.color = "red";
+                $(cell).addClass('cell-conflict');
+                $('#' + boardID).addClass('cell-conflict');
+                // cell.style.color = "red";
+                // board[i].style.color = "red";
                 if (conflict_list.indexOf(cell.id) === -1) conflict_list[conflict_list.length] = cell.id;
                 if (conflict_list.indexOf(board[i].id) === -1) conflict_list[conflict_list.length] = board[i].id;
             }
@@ -35,8 +44,8 @@ function removeConflicts() {
         var cell = conflict_list[i];
         cell = document.getElementById(cell);
         if (checkCell(cell)) {
-            cell.style.color = "black";
-            conflict_list.splice(i,1);
+            $(cell).removeClass('cell-conflict');
+            conflict_list.splice(i, 1);
         }
     }
 }

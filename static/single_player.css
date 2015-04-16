@@ -1,24 +1,19 @@
 /*By: Team GO*/
 
 /*SUDOKU PUZZLE START*/
-.cell {
-    -webkit-appearance: none;
-  box-shadow: none;
-  outline: none;
-  border: none;
-  text-align: center;
-  width: 2em;
-  height: 2em;
-  font-size: 1.8em; }
-  @media only screen and (max-width: 780px) {
-    input {
-      width: 1.2em;
-      height: 1.2em; } }
-  @media only screen and (max-width: 479px) {
-    input {
-      width: 1em;
-      height: 1em;
-      font-size: 1em; } }
+@media only screen and (max-width: 780px) {
+  input {
+    width: 1.2em;
+    height: 1.2em; 
+  } 
+}
+@media only screen and (max-width: 479px) {
+  input {
+    width: 1em;
+    height: 1em;
+    font-size: 1em; 
+  }
+}
 
 #undo {
   -moz-transform: scaleX(-1);
@@ -88,9 +83,6 @@
 .btn {
   outline: none;
 }
-
-
-
 
 
 

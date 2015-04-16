@@ -23,8 +23,6 @@ $(document).ready( function() {
             var board=document.getElementById('sudokuTable');
             var boardbdy=document.createElement('tbody');
 
-            board.style.border = "thick solid black";
-
             for(var i = 0; i < 9; ++i){
                 var row=document.createElement('tr');
                 for(var j = 0; j < 9; ++j){
@@ -32,15 +30,8 @@ $(document).ready( function() {
                     var td=document.createElement('td');
                     td.innerHTML = "";
                     td.className += "cell";
-                    td.style.border = "thin solid black";
-                    var block;
 
-                    if (i === 2 || i === 5) {
-                        td.style.borderBottom = "thick solid black";
-                    }
-                    if (j === 2 || j === 5) { 
-                        td.style.borderRight = "thick solid black";
-                    }
+                    var block;
 
                     if (i < 3 && j < 3) {
                         block = 'a';
@@ -77,22 +68,23 @@ It is executed on "New Game" press, and calls hideCells(). The algorithm is base
 David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/     
 */  
         function fillBoard() {
-            var board = document.getElementsByClassName("cell");
+            var board = document.querySelectorAll(".cell");
             var randomNine = fishYatesShuffle(9);
             //create base sudoku board
             for (var i = 0; i < 9; i++) {
                 for (var j = 0; j < 9; j++) {
+                    $(board[i * 9 + j]).removeClass('cell-conflict');
                     board[i * 9 + j].innerHTML = (i * 3 + Math.floor(i/3) + j) % 9 + 1;
-                    board[i * 9 + j].style.color = "black";
-                    board[i * 9 + j].style.backgroundColor = "#EBEBEB";
+                    // board[i * 9 + j].style.color = "black";
+                    board[i * 9 + j].className += ' cell-prefilled';
                 }
             }
             //switch corresponding cols (Ex. the 2nd and 5th column)
             for (var i = 0; i < 20; ++i) {
                 var col = Math.floor(Math.random() * 3);
                 do {
-                    var swap = col + (Math.floor(Math.random() * 3) * 3);// + 0, +3, +6
-                }while(swap === 0)
+                    var swap = col + (Math.floor(Math.random() * 3) * 3); // + 0, +3, +6
+                } while(swap === 0)
                 for (var j = 0; j < 9; ++j) {
                     var tmp = board[col + (j*9)].innerHTML;
                     board[col + (j*9)].innerHTML = board[swap + (j*9)].innerHTML;
@@ -150,7 +142,8 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
             var board = document.getElementsByClassName("cell");
             for (var i = 0; i < solved_board.length; i++) {
                 board[i].innerHTML = solved_board[i];
-                board[i].style.color = "black";
+                $(board[i]).removeClass('cell-conflict');
+                // board[i].style.color = "black";
             }
             testing_board_size = 81;
             checkBoard();
@@ -165,7 +158,8 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
         };
 /*hideCells() naiivly hides 4 squares/block. This will create an easy sudoku puzzle that will normally be unique.*/
         function hideCells() {
-            var board = document.getElementsByClassName("cell");
+            // var board = document.getElementsByClassName("cell");
+            var board = $('.cell');
             var block = fishYatesShuffle(9);
             for (var i = 0; i < 9; ++i) {
                 var cells = fishYatesShuffle(9);
@@ -177,7 +171,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                     var row = Math.floor(cell/3);
                     var col = cell - row*3;
                     cell = row*9 + block_row*27 + col + block_col*3;
-                    board[cell].style.backgroundColor = "white";
+                    board[cell].className = 'cell'; // removes all, then adds
                     board[cell].innerHTML = "";
                     --board_size;
                 }
@@ -247,19 +241,18 @@ Returns the scrambled array. */
         var td_table=document.createElement('table');
         var td_bdy=document.createElement('tbody');
 
-        for(var i = 0; i < 3; ++i)
-        {
+        for (var i = 0; i < 3; ++i) {
             var row=document.createElement('tr');
             for(var j = 0; j < 3; ++j){
                 var td=document.createElement('td');
-                if ((i*3+j) < marked_board[index].length)
-                {
+                if ((i*3+j) < marked_board[index].length) {
                     td.innerHTML = marked_board[index][i*3+j];
                     td.style.fontSize = "x-small";
-                    td.style.color = "black";
+                    td.style.color = "white";
                 }
-                else 
-                {td.innerHTML = "";}
+                else {
+                    td.innerHTML = "";
+                }
                 row.appendChild(td);
             }
             td_bdy.appendChild(row);
@@ -267,6 +260,6 @@ Returns the scrambled array. */
         td_table.appendChild(td_bdy);
         td_table.style.display = "inline-block";
 
-        edit_cell.appendChild(td_table);
+        activeCell.appendChild(td_table);
     };       
 //END CREATE MARK TABLE//

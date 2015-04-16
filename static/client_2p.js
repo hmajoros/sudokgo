@@ -63,19 +63,20 @@
             var cell = $('.cell')[i];
             if (board[i]) {
                 cell.innerHTML = board[i];
-                cell.style.backgroundColor = '#EBEBEB';
+                cell.addClass('cell-prefilled');
             } else {
-                cell.style.backgroundColor = 'white';
+                cell.addClass('cell'); // TODO: is tis needed?
             }
         }
     });
 
     socket.on('insert_entry', function(id) {
-        $('#' + id).css({ backgroundColor: '#FFCBA6' });
+        $('#' + id).addClass('opponent-solve');
     });
 
     socket.on('remove_entry', function(id) {
         $('#' + id).css({ backgroundColor: 'white' });
+        $('#' + id).removeClass('opponent-solve');
     });
 
     $('#printstats').click(function() {
