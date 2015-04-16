@@ -57,7 +57,7 @@ body {
 .cell-prefilled.cell-active { background-color: #283593; }
 .opponent-solve.cell-active { background-color: #FFA000; }
 
-.cell-conflict { background-color: #F44336 !important; }
+.cell-conflict { color: #F44336 !important; }
 
 /* might be a better way to do this... but do I care right now? */
 .cell[id$='2a'], .cell[id$='2b'], .cell[id$='2c'],

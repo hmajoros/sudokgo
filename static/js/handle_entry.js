@@ -74,6 +74,7 @@
 
         if (enter_num) {
             if (socket != null) socket.emit('client_board_update', activeCell.id, key);
+            
             if (key != oldVal) {
                 changeCell(activeCell, key, oldVal);
                 var undoInfo = [3];
@@ -82,7 +83,8 @@
                 undoInfo[2] = key;
                 undoStack.push(undoInfo);
             }
-
+            checkCell(activeCell);
+            removeConflicts();
         } else { // marks
             if (key === "") {
                 marked_board[index] = [];
@@ -105,7 +107,6 @@
 
         testing_board_size = updateBoardSize();
         checkBoard();
-        console.log(testing_board_size);
     };
 
 //formats selected cell and reports index, current cell val
@@ -153,11 +154,12 @@
             for (var j = 0; j < 9; j++) {
                 //and isn't a mark
                 var num = board[i * 9 + j].innerHTML;
-                if (num > 0 && num < 10) {
+                if (num > 0 && num < 10 && !$(board[i * 9 + j]).hasClass("cell-conflict")) {
                     testingBoardSize++;
                 }
             }
         }
+        console.log(testingBoardSize);
         return testingBoardSize;
     }
 //END ENTRY HANDLE
@@ -188,12 +190,6 @@
                 cell.innerHTML = null; // TODO: will this ever trigger?
         else
             cell.innerHTML = new_value;
-
-        checkCell(cell);
-        removeConflicts();
-        testing_board_size = updateBoardSize();
-        checkBoard();
-        console.log(testing_board_size);
     }
 
 

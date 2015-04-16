@@ -4,7 +4,6 @@
 var conflict_list = [];
 
 function checkCell(cell) {
-    console.log(cell);
     // var board = document.getElementsByClassName("cell");
     var board = $('.cell'),
         cellID = $(cell)[0].id,
@@ -23,7 +22,7 @@ function checkCell(cell) {
 
         if (row === rowCheck && col === colCheck) continue;
         if (row === rowCheck || col === colCheck || block === blockCheck) {
-            if (cell.innerHTML && cell.innerHTML === board[i].innerHTML) {
+            if (cell.innerHTML === board[i].innerHTML) {
                 valid = false;
                 //will add to conflict list unless reviewing conflict list
                 $(cell).addClass('cell-conflict');
@@ -69,7 +68,6 @@ function removeConflicts() {
     function sendNameToLeaderboard() {
         var time = document.getElementById("timer").innerHTML;
         var name = document.getElementById("nameForLeaderboard").value;
-        console.log(name, time);
         nameAndTime = [];
         nameAndTime[0] = name;
         nameAndTime[1] = time;

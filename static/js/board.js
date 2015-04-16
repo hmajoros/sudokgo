@@ -145,7 +145,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
                 $(board[i]).removeClass('cell-conflict');
                 // board[i].style.color = "black";
             }
-            testing_board_size = 81;
+            testing_board_size = updateBoardSize();
             checkBoard();
          };
          function clearBoard() {
