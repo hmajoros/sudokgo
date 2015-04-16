@@ -152,6 +152,7 @@ David J. Rager at http://blog.fourthwoods.com/2011/02/05/sudoku-in-javascript/
             var board = document.getElementsByClassName("cell");
             for (var i = 0; i < board.length; i++) {
                 board[i].innerHTML = "";
+                board[i].className = 'cell';
             }
             document.getElementById("timer").innerHTML = "00:00";
             board_size = 0;
